@@ -1,447 +1,430 @@
-# QwenF1 Evidence Pipeline
+# Thor
 
-`QwenF1` is a data-first project for building an evidence-grounded exercise physiology and sports nutrition assistant. The repository now contains both the evidence pipeline and the first real standalone fine-tuning datasets for the model.
+<div align="center">
 
-The project currently supports:
+## Evidence-Grounded Intelligence For Exercise, Nutrition, And Screening-Aware Coaching
 
-- retrieval-augmented reasoning
-- grounded synthetic coaching data generation
-- supervised fine-tuning of `Qwen/Qwen3.5-4B`
-- paper-quality reporting on sources, preprocessing, and evidence standards
+**Thor is a domain-specialized LLM system for building an evidence-aware exercise physiology and sports nutrition assistant that reasons under constraints, screens before prescribing, and scales through retrieval rather than brittle memorization.**
 
-The target assistant is intended to behave like an evidence-based exercise physiology and sports nutrition coach with screening-aware reasoning. It should ask clarifying questions, adapt recommendations to goals and constraints, explain why a recommendation is appropriate, and remain anchored to scientific and guideline evidence rather than generic fitness advice.
+</div>
 
-## Product Architecture
+---
 
-`QwenF1` is being built as a product stack rather than a single weight file expected to memorize everything.
+## Executive Summary
 
-The intended deployment shape is:
+Thor is not a generic fitness chatbot.
 
-1. a fine-tuned consultation model
-2. a retrieval layer over the scraped evidence corpus
-3. a citation/product layer that can render evidence cleanly and incorporate later web updates
+It is a full-stack training and inference system designed to produce a much narrower, more defensible behavior profile:
 
-This means:
+- ask the right questions before making recommendations
+- adapt plans to injury, pain, recovery, and user constraints
+- rely on curated evidence pipelines instead of style-heavy prompting
+- combine fine-tuned consultation behavior with retrieval-backed factual depth
+- preserve a modular product path for citations, UX, and future evidence refresh
 
-- fine-tuning is used to teach consultation behavior, screening, and evidence-aware reasoning style
-- retrieval is used to supply factual depth, traceable evidence, and later corpus growth
-- citation formatting and source presentation are handled at the product layer
+The core thesis is simple:
 
-The current architecture document is:
+**The highest-value domain LLMs will not be the ones that memorize the most. They will be the ones that separate behavior, evidence, and product orchestration cleanly.**
 
-- [docs/product_architecture.md](docs/product_architecture.md)
-- [docs/rag_consultation_runbook.md](docs/rag_consultation_runbook.md)
-- [docs/thor_ec2_docker_runbook.md](docs/thor_ec2_docker_runbook.md)
+---
 
-## Research Objective
+## Why This Matters
 
-The central research question is whether a compact local model can outperform generic LLM fitness advice by combining:
+The typical failure mode in consumer-facing fitness AI is not lack of fluency. It is lack of discipline.
 
-- curated gold-standard nutrition databases
-- structured exercise references
-- scientific review literature
-- clinical and public-health guideline material
-- later-stage retrieval over a normalized evidence corpus
+Most systems fail because they:
 
-The intended product behavior is:
+- prescribe before screening
+- give generic plans independent of user context
+- mix low-trust and high-trust knowledge without control
+- hide weak reasoning behind confident language
+- couple product quality to weight memorization alone
 
-1. Ask about goals, injuries, medical issues, limitations, training history, and preferences.
-2. Generate workout and nutrition recommendations that are explicitly constrained by those answers.
-3. Back recommendations with evidence-grounded reasoning.
-4. Support citation-style answers when retrieval is enabled.
-5. Avoid the common failure mode of confident but weakly supported fitness guidance.
+Thor is built against that entire pattern.
 
-## Scope
+It is designed for a different standard:
 
-Current scope covers four evidence layers:
+- **behaviorally aligned**: consultation flow is trained explicitly
+- **evidence-grounded**: factual depth comes from retrieval assets, not wishful memorization
+- **screening-aware**: the assistant is trained to gather constraints before planning
+- **capital efficient**: phased LoRA runs, smoke tests, and same-instance Docker reuse reduce waste
+- **product ready**: the architecture already anticipates citations, evidence cards, and retrieval-backed responses
 
-- `nutrition`
-  - USDA food and nutrient references
-  - dietary supplement fact sheets and label data
-- `workout`
-  - exercise libraries and movement references
-- `science`
-  - review-level scientific evidence and open-access full text
-- `guidelines`
-  - public-health and condition-aware exercise guidance
+---
 
-This repository now contains:
+## Product Thesis
 
-- the raw, normalized, and chunked evidence corpus
-- the embedding index used for retrieval-grounded generation
-- the standalone knowledge-bearing SFT corpus
-- the final first-pass training datasets for `QwenF1`
+Thor targets a category with real product leverage:
 
-## Evidence Standard
+- high-frequency user questions
+- high variability in user goals and limitations
+- strong demand for personalization
+- meaningful value from evidence-backed reasoning
+- obvious gaps in current generic LLM performance
 
-The project prioritizes source quality over raw scale. The evidence hierarchy used here is:
+In product terms, Thor is building toward:
 
-### Tier 1
+1. a consultation-grade reasoning engine
+2. a retrieval-backed evidence substrate
+3. a user-facing guidance layer that can explain, constrain, and eventually cite recommendations clearly
 
-- `USDA FoodData Central`
-- `NIH Office of Dietary Supplements`
-- `Dietary Supplement Label Database (DSLD)`
-- `PubMed Central (PMC)` full text when open access is available
-- official public-health and professional guidance from sources such as `CDC`, `WHO`, `HHS`, `AHA`, `ACOG`, and `ACSM`
+This is a stronger long-term position than training a single model and hoping it remains current, safe, and specific across expanding use cases.
 
-### Tier 2
+---
 
-- `PubMed` review and meta-analysis indexing
-- `MedlinePlus`
+## System Architecture
 
-### Tier 3
+Thor uses a three-layer architecture.
 
-- structured exercise references such as `ExRx`
-- public exercise catalogs such as `MuscleWiki`
-
-Tier 3 sources are useful for movement coverage and exercise variation breadth, but they are not treated as the final authority for evidence-backed prescription logic.
-
-## Current Corpus
-
-The repository currently contains a normalized evidence corpus and a retrieval-ready chunk corpus.
-
-### Normalized evidence counts
-
-- `nutrition`
-  - `evidence_fdc.jsonl`: `13,590`
-- `supplements`
-  - `evidence_nih_ods.jsonl`: `79`
-  - `evidence_dsld.jsonl`: `460`
-- `workout`
-  - `evidence_exrx.jsonl`: `1,173`
-  - `evidence_musclewiki.jsonl`: `524`
-- `guidelines`
-  - `evidence_cdc.jsonl`: `5`
-  - `evidence_who.jsonl`: `1`
-  - `evidence_hhs.jsonl`: `2`
-  - `evidence_acsm.jsonl`: `1`
-  - `evidence_nia.jsonl`: `1`
-  - `evidence_aha.jsonl`: `3`
-  - `evidence_acog.jsonl`: `1`
-  - `evidence_medlineplus.jsonl`: `4`
-- `science`
-  - `evidence_pubmed.jsonl`: `3,295`
-  - `evidence_pmc.jsonl`: `576`
-
-### Aggregate counts
-
-- merged normalized corpus: `19,715` records in [data/normalized/evidence_all.jsonl](data/normalized/evidence_all.jsonl)
-- cleaned retrieval corpus: `19,063` records in [data/ingestion/evidence_cleaned.jsonl](data/ingestion/evidence_cleaned.jsonl)
-- chunk corpus: `58,938` chunks in [data/ingestion/evidence_chunks.jsonl](data/ingestion/evidence_chunks.jsonl)
-- embedding index: `58,938` vectors, `384` dimensions, built with `sentence-transformers/all-MiniLM-L6-v2`
-
-### Coverage notes
-
-- `USDA FoodData Central` provides the strongest nutrition breadth.
-- `PubMed` and `PMC` provide the main scientific reasoning backbone.
-- `ExRx` and `MuscleWiki` provide exercise breadth, movement coverage, and variation patterns.
-- official guidelines provide the safety, screening, and subpopulation layer needed for condition-aware reasoning.
-
-The corpus is now broad enough to start retrieval and grounded example generation, but it is still being expanded with a focus on exercise physiology, sports nutrition, and condition-aware prescription evidence.
-
-## Project Docs
-
-Additional project documentation lives in:
-
-- [PROJECT_CONTEXT.md](PROJECT_CONTEXT.md)
-- [docs/AWS_UNSLOTH_TRAINING.md](docs/AWS_UNSLOTH_TRAINING.md)
-- [docs/dataset.md](docs/dataset.md)
-- [docs/methodology.md](docs/methodology.md)
-- [docs/evaluation_plan.md](docs/evaluation_plan.md)
-
-## Repository Layout
-
-```text
-configs/
-  dsld_queries.json
-  fdc_bulk_targets.json
-  guideline_pages.json
-  pubmed_queries.json
-  sources.json
-
-data/
-  raw/
-  normalized/
-  ingestion/
-  sft/
-
-schemas/
-  evidence_record.schema.json
-  normalized_record.schema.json
-  raw_record.schema.json
-  sft_chat.schema.json
-
-scripts/
-  scrape_*.py
-  normalize_*.py
-  prepare_ingestion_corpus.py
-  run_raw_collection_wsl.sh
-  run_raw_growth_wsl.sh
-  run_pipeline_wsl.sh
-  train_qwenf1_unsloth.py
-  train_qwenf1_wsl.sh
-  ec2_train_download_terminate_wsl.sh
-  ec2_watch_training_wsl.sh
-  cleanup_training_artifacts_wsl.sh
-
-requirements-train.txt
+```mermaid
+flowchart LR
+    A[Raw Domain Knowledge] --> B[Normalization Layer]
+    B --> C[Cleaned Evidence Corpus]
+    C --> D[Chunking + Embeddings]
+    D --> E[Retrieval Layer]
+    C --> F[Grounded Example Generation]
+    F --> G[Validation + Gold QC]
+    G --> H[Phased Strict SFT Sets]
+    H --> I[LoRA Fine-Tuning]
+    E --> J[Inference-Time Evidence Context]
+    I --> K[Consultation Model]
+    J --> K
+    K --> L[Product Layer: Guidance, Safety, Citations, UX]
 ```
 
-## Pipeline Stages
+### 1. Consultation Model
 
-The pipeline is organized into explicit stages so later experiments and paper reporting can separate source acquisition from training behavior.
+The fine-tuned model is optimized for **decision behavior**, not encyclopedic recall.
 
-### 1. Raw collection
+It is trained to:
 
-Source-specific scrapers write raw HTML, XML, JSON, or downloaded archives into `data/raw/...`.
+- collect missing context before planning
+- perform lightweight screening
+- reason with user constraints in view
+- adapt recommendations rather than emit templates
+- explain tradeoffs in clear language
 
-Important collectors include:
+### 2. Retrieval Layer
 
-- [scripts/scrape_fdc_bulk.py](scripts/scrape_fdc_bulk.py)
-- [scripts/scrape_nih_ods.py](scripts/scrape_nih_ods.py)
-- [scripts/scrape_dsld.py](scripts/scrape_dsld.py)
-- [scripts/scrape_pubmed_reviews.py](scripts/scrape_pubmed_reviews.py)
-- [scripts/scrape_pmc_fulltext.py](scripts/scrape_pmc_fulltext.py)
-- [scripts/scrape_guideline_pages.py](scripts/scrape_guideline_pages.py)
-- [scripts/scrape_exrx_scrapling.py](scripts/scrape_exrx_scrapling.py)
-- [scripts/scrape_musclewiki_scrapling.py](scripts/scrape_musclewiki_scrapling.py)
+The retrieval layer is optimized for **factual precision and extensibility**.
 
-### 2. Normalization
+It is responsible for:
 
-Source records are converted into a unified evidence schema in `data/normalized/`.
+- surfacing relevant evidence per user scenario
+- reducing hallucination on detailed claims
+- carrying factual density beyond what should live in the weights
+- allowing the system to grow without retraining on every corpus update
 
-The main normalizer is:
+### 3. Product Layer
 
-- [scripts/normalize_evidence_corpus.py](scripts/normalize_evidence_corpus.py)
+The product layer is optimized for **trust and usability**.
 
-Each normalized record includes:
+It handles:
 
-- stable ID
-- domain
-- source
-- record type
-- title and summary
-- normalized content payload
-- grounding URLs
-- source metadata
+- response rendering
+- future citation UX
+- source presentation
+- interaction constraints
+- evidence-linked user experiences beyond raw model output
 
-### 3. Cleaning and chunking
-
-The merged corpus is deduplicated, text-cleaned, and chunked for retrieval.
-
-- [scripts/prepare_ingestion_corpus.py](scripts/prepare_ingestion_corpus.py)
-
-Outputs:
-
-- [data/ingestion/evidence_cleaned.jsonl](data/ingestion/evidence_cleaned.jsonl)
-- [data/ingestion/evidence_chunks.jsonl](data/ingestion/evidence_chunks.jsonl)
-- [data/ingestion/manifest.json](data/ingestion/manifest.json)
-
-### 4. Embeddings and retrieval
-
-Embedding and retrieval scripts:
-
-- [scripts/embed_evidence_chunks.py](scripts/embed_evidence_chunks.py)
-- [scripts/retrieve_evidence.py](scripts/retrieve_evidence.py)
-
-Outputs:
-
-- `data/embeddings/sentence-transformers__all-MiniLM-L6-v2/embeddings.npy`
-- `data/embeddings/sentence-transformers__all-MiniLM-L6-v2/metadata.jsonl`
-- `data/embeddings/sentence-transformers__all-MiniLM-L6-v2/manifest.json`
-
-### 5. SFT dataset assembly
-
-The repository now contains:
-
-- a full-coverage standalone knowledge-bearing corpus
-- grounded coaching examples curated from Bedrock generation
-- final merged training files in `data/sft/final/`
-
-Legacy broad train files:
-
-- [data/sft/final/qwenf1_train_v1.jsonl](data/sft/final/qwenf1_train_v1.jsonl)
-- [data/sft/final/qwenf1_train_v1_fullcoverage.jsonl](data/sft/final/qwenf1_train_v1_fullcoverage.jsonl)
-
-Current strict phased train file for consultation-focused sanity-check runs:
-
-- [data/sft/final/qwenf1_train_phase12_strict_gold.jsonl](data/sft/final/qwenf1_train_phase12_strict_gold.jsonl)
-
-Current phase status:
-
-- [docs/phase_training_status.md](docs/phase_training_status.md)
-
-### 6. Unsloth training
-
-The initial Unsloth training stack is now present:
-
-- [scripts/train_qwenf1_unsloth.py](scripts/train_qwenf1_unsloth.py)
-- [scripts/train_qwenf1_wsl.sh](scripts/train_qwenf1_wsl.sh)
-- [scripts/train_qwenf1_phase12_docker.sh](scripts/train_qwenf1_phase12_docker.sh)
-- [scripts/run_remote_thor_smoke_preflight_wsl.sh](scripts/run_remote_thor_smoke_preflight_wsl.sh)
-- [scripts/setup_wsl_workspace.sh](scripts/setup_wsl_workspace.sh)
-- [requirements-train.txt](requirements-train.txt)
-- [docs/AWS_UNSLOTH_TRAINING.md](docs/AWS_UNSLOTH_TRAINING.md)
-- [docs/docker_training.md](docs/docker_training.md)
-- [docs/thor_ec2_docker_runbook.md](docs/thor_ec2_docker_runbook.md)
-
-## Collection Environment
-
-The active pipeline runs in WSL using project-local virtual environments.
-
-### Main environment
-
-- `.venv`
-- used for requests/BeautifulSoup/XML/normalization steps
-
-### Scrapling sidecar
-
-- `.venv_scrapling`
-- used for sources blocked to ordinary HTTP clients, especially `ExRx`, `MuscleWiki`, and some guideline pages
-
-No global package installs are required for the intended workflow.
-
-### Training environment
-
-- `.venv_train`
-- used for Unsloth, TRL, Transformers, and CUDA-enabled PyTorch on Linux/WSL/EC2
-- preferred repeatable path going forward: Docker via [docs/docker_training.md](docs/docker_training.md)
-
-## Quickstart
-
-### Setup
-
-```bash
-cp .env.example .env
-bash scripts/setup_wsl_env.sh
+```mermaid
+flowchart TB
+    U[User Profile + Goal + Constraints] --> Q[Consultation Model]
+    R[Retrieved Evidence Context] --> Q
+    Q --> P[Reasoned Plan / Clarification / Recommendation]
+    P --> X[Product Rendering Layer]
+    X --> Y[Grounded End-User Experience]
 ```
 
-### Run the raw collection pipeline
+---
+
+## What Is Technically Distinctive
+
+Thor is opinionated in ways that matter.
+
+### Fine-Tuning Is Not Treated As The Knowledge Store
+
+The model is tuned for:
+
+- consultation behavior
+- safety-aware interaction patterns
+- screening logic
+- planning structure
+- domain-specific reasoning style
+
+The model is **not** asked to memorize the entire knowledge base.
+
+That design choice improves:
+
+- maintainability
+- refreshability
+- evaluation clarity
+- cost efficiency
+
+### Retrieval Is A First-Class System Component
+
+Thor treats retrieval as part of the architecture, not an afterthought.
+
+That means:
+
+- evidence preparation is explicit
+- chunking and embeddings are persistent assets
+- retrieval is part of the intended product path
+- future evidence refresh does not require retraining by default
+
+### Training Is Curriculum-Shaped
+
+Thor avoids the common mistake of collapsing all synthetic and derived data into one monolithic SFT mixture.
+
+Instead, it uses staged trust levels:
+
+- broad legacy sets for reference and ablation
+- grounded generation outputs for candidate supervision
+- validation and rewrite stages for structure control
+- strict gold-QC datasets for paid training runs
+
+This is a cleaner research and engineering posture than “more rows = better model.”
+
+---
+
+## Data Filtering Strategy
+
+Thor is built around **signal extraction**, not just corpus acquisition.
+
+The filtering pipeline is one of the main intellectual assets of the repo.
+
+```mermaid
+flowchart LR
+    A[Collected Records] --> B[Schema Normalization]
+    B --> C[Deduplication]
+    C --> D[Noise Removal]
+    D --> E[Retrieval Text Construction]
+    E --> F[Grounded Generation]
+    F --> G[Validation]
+    G --> H[Gold QC]
+    H --> I[Strict Final Training Rows]
+```
+
+### Normalization First
+
+Heterogeneous sources are normalized into a common schema before they influence retrieval or SFT.
+
+This creates a stable substrate for:
+
+- domain tagging
+- record typing
+- metadata tracking
+- grounding retention
+- downstream filtering
+
+### Deduplication Before Embeddings
+
+Thor removes repeated or near-repeated evidence before retrieval preparation.
+
+That reduces:
+
+- repetition bias
+- embedding waste
+- artificial source overweighting
+- low-value duplication in supervised training assets
+
+### Evidence And Dialogue Are Kept Separate
+
+A critical design rule in Thor is:
+
+**raw evidence is not chat data**
+
+That separation gives cleaner system boundaries between:
+
+- evidence corpus
+- retrieval chunks
+- grounded synthetic supervision
+- final strict SFT sets
+
+### Grounded Generation Before Final SFT
+
+Thor does not feed scraped source text directly into conversational fine-tuning.
+
+Instead, it uses the evidence layer to produce training examples shaped around the actual downstream task:
+
+- asking
+- screening
+- adapting
+- constraining
+- explaining
+
+That is a far better match to the target product than naive corpus-to-chat transformation.
+
+### Gold QC Gates
+
+Candidate rows do not become training rows automatically.
+
+They are filtered into explicit buckets such as:
+
+- keep
+- needs rewrite
+- reject
+
+Only the highest-trust rows make it into strict phased training.
+
+---
+
+## Training Strategy
+
+Thor uses a capital-efficient, research-friendly training loop.
+
+```mermaid
+flowchart TB
+    A[Corpus Build] --> B[Retrieval Assets]
+    B --> C[Grounded Example Generation]
+    C --> D[Validation]
+    D --> E[Gold QC]
+    E --> F[Strict Phased Dataset]
+    F --> G[LoRA Smoke Run]
+    G --> H[Full Training Run]
+    H --> I[Retrieval-Bound Evaluation]
+```
+
+### Key Training Decisions
+
+- LoRA over heavyweight full-model retraining
+- strict phased data before broad scaling
+- smoke tests before expensive runs
+- Dockerized GPU path for reproducibility
+- same-instance EC2 reuse to avoid unnecessary image rebuild waste
+- retrieval-bound evaluation as the real target condition
+
+### Why This Is Smart
+
+This approach is:
+
+- cheaper to iterate
+- easier to debug
+- easier to audit
+- less vulnerable to data drift
+- more aligned with how the end product will actually run
+
+---
+
+## Purpose-Built For Constrained Guidance
+
+Thor is not trying to be a universal health model.
+
+It is aiming for a narrower, more useful behavior profile:
+
+- exercise physiology coaching
+- sports nutrition guidance
+- screening-aware adaptation
+- evidence-grounded planning
+- user-specific reasoning under real constraints
+
+That is the correct scope for a model meant to be practically useful and operationally maintainable.
+
+---
+
+## Current Workflow
+
+### Build The Evidence Layer
 
 ```bash
 bash scripts/run_raw_collection_wsl.sh
-```
-
-### Run a larger growth pass
-
-```bash
-bash scripts/run_raw_growth_wsl.sh
-```
-
-### Rebuild normalized and retrieval corpora
-
-```bash
 source .venv/bin/activate
 python scripts/normalize_evidence_corpus.py
 python scripts/prepare_ingestion_corpus.py
-```
-
-### Build embeddings
-
-```bash
-source .venv/bin/activate
 python scripts/embed_evidence_chunks.py --batch-size 128
 ```
 
-### Train QwenF1
-
-See [docs/AWS_UNSLOTH_TRAINING.md](docs/AWS_UNSLOTH_TRAINING.md) for the full setup.
-
-Typical Linux/WSL training flow:
+### Run A Strict Fine-Tuning Pass
 
 ```bash
-cd /mnt/c/Users/Bot/Desktop/Thor
-sudo bash scripts/setup_wsl_workspace.sh
-
-cd /workspace/Thor
-python3 -m venv .venv_train
-source .venv_train/bin/activate
-python -m pip install --upgrade pip setuptools wheel
-python -m pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu124
-python -m pip install -r requirements-train.txt
-
-bash scripts/train_qwenf1_wsl.sh
+bash scripts/train_qwenf1_phase12_docker.sh
 ```
 
-Preferred repeatable GPU flow:
+### Reuse The Same EC2 Instance Efficiently
 
 ```bash
-docker compose -f docker-compose.unsloth.yml build
-docker compose -f docker-compose.unsloth.yml run --rm thor-train bash scripts/train_qwenf1_phase12_strict_wsl.sh
+HOST=<ec2-public-dns> bash scripts/sync_thor_repo_to_ec2_wsl.sh
+HOST=<ec2-public-dns> bash scripts/thor_ec2_ssh_wsl.sh bash /home/ubuntu/scripts/remote_phase12_start.sh
 ```
 
-### Run retrieval
+---
 
-```bash
-source .venv/bin/activate
-python scripts/retrieve_evidence.py --query "Create a hypertrophy workout for a beginner with mild knee pain who wants to lose fat" --top-k 5
+## Visual Logic
+
+```mermaid
+flowchart TD
+    A[Generic Fitness LLM Failure Mode]
+    A --> A1[Weak screening]
+    A --> A2[Generic prescriptions]
+    A --> A3[Confident hallucination]
+    A --> A4[No evidence traceability]
+
+    B[Thor Design Response]
+    B --> B1[Consultation fine-tuning]
+    B --> B2[Strict filtering and QC]
+    B --> B3[Retrieval-backed factual depth]
+    B --> B4[Product-layer grounding]
 ```
 
-## Design Principles
+```mermaid
+flowchart LR
+    U[User Goal + Constraints] --> S[Screening Questions]
+    S --> P[Personalized Reasoning]
+    P --> R[Retrieved Evidence]
+    R --> G[Grounded Guidance]
+    G --> C[Trustworthy Product Output]
+```
 
-The project follows several constraints that matter both for engineering and for later publication.
+---
 
-### Evidence-first, not prompt-first
+## Repository Structure
 
-The model should not learn generic fitness style before it has access to grounded evidence. Corpus construction is treated as the primary research asset.
+```text
+configs/        query plans, seed controls, and generation settings
+data/           staged training assets and corpus derivatives
+docs/           architecture, methodology, training, and runbooks
+schemas/        normalized record and SFT schemas
+scripts/        collection, normalization, retrieval, QC, training, EC2 ops
+```
 
-### Separate evidence from behavior
+Highest-value areas:
 
-Raw and normalized evidence are kept separate from later supervised conversational data. This allows:
+- `scripts/` for the actual system mechanics
+- `docs/` for architectural and methodological framing
+- `data/sft/final/` for phased final supervised datasets
+- `Dockerfile.unsloth` and `docker-compose.unsloth.yml` for reproducible GPU execution
 
-- transparent provenance
-- better ablations
-- later comparison between retrieval-only, SFT-only, and hybrid systems
+---
 
-### Prefer review-level and official guidance for reasoning
+## Status
 
-Exercise libraries are useful for movement selection and exercise variation, but higher-level reasoning should come from:
+Thor already contains:
 
-- systematic reviews
-- meta-analyses
-- open-access full-text reviews
-- official guideline pages
+- a multi-stage evidence pipeline
+- retrieval-ready corpus preparation
+- grounded example generation
+- validation and gold-QC tooling
+- phased strict SFT datasets
+- repeatable Docker training
+- EC2 runbooks and automation
+- a validated same-instance strict smoke run using LoRA + Unsloth
 
-### Support condition-aware screening
+That means the project is beyond “idea stage.”
 
-The intended assistant should ask about:
+The remaining work is not to make it look like an AI system.
 
-- goals
-- injuries or pain
-- disease history
-- medication-relevant issues when appropriate
-- recovery and tolerance constraints
+The remaining work is to keep sharpening the strict consultation data, continue high-discipline fine-tuning, and bind the model tightly to retrieval-backed product behavior.
 
-The corpus therefore emphasizes exercise recommendations that can later be linked to contraindications, modification logic, and subpopulation guidance.
+---
 
-## Known Limitations
+## Bottom Line
 
-- Official guideline sites are often small in page count even when high in value.
-- Some sources require a browser-grade fetcher and cannot be collected reliably with plain HTTP.
-- Some PubMed and PMC requests fail transiently; collectors are written to fail soft and continue.
-- Current corpus quality is stronger than current corpus balance; nutrition remains larger than workout-specific evidence.
-- The current repository does not yet include the final grounded coaching SFT dataset.
+Thor is an attempt to build the right kind of vertical LLM system:
 
-## Intended Paper Story
+- narrow enough to be reliable
+- structured enough to be maintainable
+- evidence-aware enough to be defensible
+- efficient enough to iterate quickly
+- product-shaped enough to matter
 
-This repository is being structured so it can later support a paper or technical report describing:
-
-- source selection criteria
-- evidence hierarchy
-- corpus construction methodology
-- normalization and provenance handling
-- retrieval corpus preparation
-- synthetic grounded-data generation
-- model fine-tuning strategy
-- evaluation against generic LLM fitness advice
-
-The README is therefore intentionally written as both project documentation and early paper scaffolding.
-
-## Immediate Next Step
-
-The next phase is:
-
-1. run the first `Qwen/Qwen3.5-4B` Unsloth training job on the balanced dataset
-2. evaluate adapter behavior, safety, and factuality
-3. tune hyperparameters or scale model size if needed
-4. keep retrieval/web as the post-cutoff update layer
+If generic LLMs are broad but shallow for this category, Thor is designed to be narrower and much deeper where it counts.
