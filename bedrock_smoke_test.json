@@ -1,0 +1,11 @@
+{
+  "modelId": "google.gemma-3-4b-it",
+  "messages": [
+    {
+      "role": "user",
+      "content": [
+        {"text": "Return strict JSON only with keys ok and model."}
+      ]
+    }
+  ]
+}

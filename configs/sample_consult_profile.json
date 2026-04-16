@@ -1,0 +1,24 @@
+{
+  "goal": "lose fat while maintaining strength",
+  "age": 42,
+  "sex": "female",
+  "height_cm": 165,
+  "weight_kg": 78,
+  "training_days_per_week": 4,
+  "equipment": [
+    "dumbbells",
+    "bench",
+    "stationary bike"
+  ],
+  "medical_conditions": [
+    "hypertension"
+  ],
+  "medications": [
+    "blood pressure medication"
+  ],
+  "injuries_or_pain": [
+    "mild knee discomfort on deep squats"
+  ],
+  "diet_pattern": "vegetarian",
+  "sleep_hours": 6.5
+}

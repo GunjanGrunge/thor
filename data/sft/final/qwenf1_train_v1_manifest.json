@@ -1,0 +1,31 @@
+{
+  "output_examples_balanced": 8289,
+  "output_examples_fullcoverage": 18563,
+  "standalone_selected": 8712,
+  "standalone_fullcoverage": 19083,
+  "grounded_selected": 7,
+  "seed_selected": 42,
+  "standalone_domain_counts": {
+    "nutrition": 4000,
+    "supplements": 536,
+    "workout": 1159,
+    "guidelines": 17,
+    "science": 3000
+  },
+  "final_domain_counts": {
+    "workout": 1150,
+    "nutrition": 4004,
+    "science": 2596,
+    "supplements": 516,
+    "unknown": 7,
+    "guidelines": 16
+  },
+  "final_variant_counts": {
+    "standalone_knowledge": 8259,
+    "grounded_train_ready": 7,
+    "seed_corpus": 23
+  },
+  "knowledge_cutoff": "2026-04-15",
+  "output_path": "data/sft/final/qwenf1_train_v1.jsonl",
+  "fullcoverage_output_path": "data/sft/final/qwenf1_train_v1_fullcoverage.jsonl"
+}

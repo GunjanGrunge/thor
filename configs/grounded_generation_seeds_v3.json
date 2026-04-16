@@ -1,0 +1,280 @@
+{
+  "seeds": [
+    {
+      "id": "seed_hypertension_weight_loss_v3",
+      "domain": "combined",
+      "user_query": "I have hypertension and want to lose fat without doing anything unsafe. How should I train and eat?",
+      "notes": "Must screen for physician clearance, medications, symptoms, BP control, current activity, and nutrition baseline."
+    },
+    {
+      "id": "seed_type2_diabetes_beginner_v3",
+      "domain": "combined",
+      "user_query": "I have type 2 diabetes and I am out of shape. What is the safest way to start workouts and improve my diet?",
+      "notes": "Must screen for medications, hypoglycemia risk, neuropathy, retinopathy, and current glucose management."
+    },
+    {
+      "id": "seed_prediabetes_fatigue_v3",
+      "domain": "combined",
+      "user_query": "My labs show prediabetes and I feel tired all the time. What training and food changes should I start with?",
+      "notes": "Must avoid crash-diet advice and link movement progression to food quality and meal structure."
+    },
+    {
+      "id": "seed_pcos_strength_loss_v3",
+      "domain": "combined",
+      "user_query": "I have PCOS and want to lose body fat while getting stronger. What should my training and nutrition look like?",
+      "notes": "Must avoid disease-treatment claims and screen for cycle issues, medications, sleep, and current activity."
+    },
+    {
+      "id": "seed_menopause_recomp_v3",
+      "domain": "combined",
+      "user_query": "I am in menopause and want to improve strength, body composition, and energy. How should I train and eat?",
+      "notes": "Must screen for symptoms, lifting history, sleep, recovery, and nutrition context before prescribing details."
+    },
+    {
+      "id": "seed_ckd_general_fitness_v3",
+      "domain": "combined",
+      "user_query": "I have chronic kidney disease and want to stay active and maintain muscle. How cautious do I need to be with exercise and diet?",
+      "notes": "Must be conservative, screen for stage, clinician guidance, symptoms, and avoid generic high-protein advice."
+    },
+    {
+      "id": "seed_post_cardiac_rehab_transition_v3",
+      "domain": "combined",
+      "user_query": "I finished formal cardiac rehab and want to keep getting fitter on my own. How should I train and eat now?",
+      "notes": "Must screen for current symptoms, cardiology guidance, medications, and tolerance."
+    },
+    {
+      "id": "seed_obesity_joint_pain_v3",
+      "domain": "combined",
+      "user_query": "I am obese, get knee pain with stairs, and want to start losing weight safely. How should I train and eat?",
+      "notes": "Must screen for pain severity, joint diagnosis, current mobility, calorie baseline, and realistic adherence."
+    },
+    {
+      "id": "seed_fatty_liver_lifestyle_v3",
+      "domain": "combined",
+      "user_query": "My doctor told me I have fatty liver and need lifestyle changes. What exercise and nutrition approach makes sense?",
+      "notes": "Must stay within lifestyle guidance, screen for medical context, and avoid overclaiming disease reversal."
+    },
+    {
+      "id": "seed_sleep_apnea_weight_training_v3",
+      "domain": "combined",
+      "user_query": "I have sleep apnea and I am trying to lose weight and get stronger. What should I start with?",
+      "notes": "Must screen for CPAP use, daytime fatigue, blood pressure, current activity, and recovery."
+    },
+    {
+      "id": "seed_beginner_strength_home_v3",
+      "domain": "workout",
+      "user_query": "I am a complete beginner with dumbbells at home. What full-body plan should I start with?",
+      "notes": "Must screen for schedule, equipment load, injury history, and tolerance before programming."
+    },
+    {
+      "id": "seed_low_back_pain_strength_v3",
+      "domain": "workout",
+      "user_query": "I get low back pain when I lift and still want to train for strength and muscle. What should I do?",
+      "notes": "Must screen for red flags, triggers, diagnosis, pain severity, and avoid push-through-pain advice."
+    },
+    {
+      "id": "seed_shoulder_press_pain_v3",
+      "domain": "workout",
+      "user_query": "Overhead pressing and benching make my shoulder hurt. How can I keep training upper body?",
+      "notes": "Must screen for pain location, severity, diagnosis, instability symptoms, and movement triggers."
+    },
+    {
+      "id": "seed_knee_oa_stay_active_v3",
+      "domain": "workout",
+      "user_query": "I have knee osteoarthritis and want to stay active without flaring it up. What training should I do?",
+      "notes": "Must use condition-aware exercise logic, ask about symptoms and limits, and avoid unsupported bravado."
+    },
+    {
+      "id": "seed_older_adult_fall_prevention_v3",
+      "domain": "workout",
+      "user_query": "I am 72 and want to improve balance so I do not fall. What kind of exercise plan should I follow?",
+      "notes": "Must screen for fall history, medical issues, walking confidence, and current activity."
+    },
+    {
+      "id": "seed_postpartum_core_return_v3",
+      "domain": "workout",
+      "user_query": "I am postpartum and unsure when to return to core work and weights. Where should I start?",
+      "notes": "Must screen for delivery timing, pelvic floor symptoms, diastasis, red flags, and clinician clearance where relevant."
+    },
+    {
+      "id": "seed_runner_add_strength_v3",
+      "domain": "workout",
+      "user_query": "I run four times a week and want to add strength work without wrecking recovery. How should I set it up?",
+      "notes": "Must screen for mileage, intensity, recovery, lifting experience, and schedule."
+    },
+    {
+      "id": "seed_hypertrophy_4day_v3",
+      "domain": "workout",
+      "user_query": "I have 4 to 5 years of training experience and want a 4-day hypertrophy split focused on chest and back. Can you outline it?",
+      "notes": "Can be more prescriptive, but should still check equipment, recovery, and schedule constraints."
+    },
+    {
+      "id": "seed_beginner_fat_loss_knee_pain_v3",
+      "domain": "workout",
+      "user_query": "I am a beginner trying to lose fat, but deep squats irritate my knees. How should I train?",
+      "notes": "Must ask about pain location, severity, diagnosis, equipment, and current activity."
+    },
+    {
+      "id": "seed_triathlon_strength_v3",
+      "domain": "workout",
+      "user_query": "I train for triathlon and want gym work that helps performance without trashing my legs. What should I do?",
+      "notes": "Must screen for training volume, intensity distribution, race calendar, and fatigue."
+    },
+    {
+      "id": "seed_vegetarian_fat_loss_protein_v3",
+      "domain": "nutrition",
+      "user_query": "I am vegetarian, trying to lose fat, and I train four days a week. How much protein should I eat and what meals make sense?",
+      "notes": "Must screen for bodyweight, calorie intake, food preferences, and adherence constraints."
+    },
+    {
+      "id": "seed_vegan_muscle_gain_v3",
+      "domain": "nutrition",
+      "user_query": "I am vegan and want to gain muscle. How should I set up protein and meals?",
+      "notes": "Must screen for bodyweight, calorie status, protein sources, and training age."
+    },
+    {
+      "id": "seed_teen_football_protein_v3",
+      "domain": "nutrition",
+      "user_query": "My teenage son plays football and wants to gain muscle. How should protein intake be handled?",
+      "notes": "Must stay guardian-aware, food-first, and avoid adult-only assumptions."
+    },
+    {
+      "id": "seed_shift_worker_weight_loss_v3",
+      "domain": "nutrition",
+      "user_query": "I work night shifts and struggle with food timing. How should I eat if I want to lose fat and still train well?",
+      "notes": "Must screen for sleep disruption, schedule, hunger patterns, and training timing."
+    },
+    {
+      "id": "seed_endurance_carbs_v3",
+      "domain": "nutrition",
+      "user_query": "I am training for longer races and keep running out of energy. How should I think about carbs and meal timing?",
+      "notes": "Must screen for training volume, duration, GI tolerance, and current fueling habits."
+    },
+    {
+      "id": "seed_high_bp_diet_v3",
+      "domain": "nutrition",
+      "user_query": "My blood pressure is high and I need to clean up my diet. Where should I start?",
+      "notes": "Must screen for current intake, sodium-heavy foods, medications, and practical adherence."
+    },
+    {
+      "id": "seed_diabetes_meal_structure_v3",
+      "domain": "nutrition",
+      "user_query": "I have type 2 diabetes and need a better meal structure for fat loss and energy. What should I focus on?",
+      "notes": "Must screen for medications, glucose issues, current meal pattern, and clinician guidance."
+    },
+    {
+      "id": "seed_bulking_digestive_issues_v3",
+      "domain": "nutrition",
+      "user_query": "I am trying to gain size but I get bloated eating more food. How should I structure meals?",
+      "notes": "Must screen for food tolerances, current calories, fiber load, and meal timing."
+    },
+    {
+      "id": "seed_menopause_protein_recovery_v3",
+      "domain": "nutrition",
+      "user_query": "I am in menopause and want to eat in a way that supports strength, recovery, and body composition. What should I focus on?",
+      "notes": "Must screen for current intake, symptoms, goals, and training frequency."
+    },
+    {
+      "id": "seed_general_fat_loss_basics_v3",
+      "domain": "nutrition",
+      "user_query": "I am overwhelmed by nutrition advice and just want the basics for losing fat without losing muscle. What should I focus on?",
+      "notes": "Must ask bodyweight, activity, current intake, and keep advice practical."
+    },
+    {
+      "id": "seed_creatine_healthy_lifter_v3",
+      "domain": "supplements",
+      "user_query": "Should I take creatine if I lift five days a week and want better gym performance?",
+      "notes": "Must screen for medical issues, medications, hydration, and training goal. Keep benefit framing balanced."
+    },
+    {
+      "id": "seed_creatine_ckd_v3",
+      "domain": "supplements",
+      "user_query": "I have chronic kidney disease and was thinking about creatine. Is that safe?",
+      "notes": "Must be conservative, ask about stage, physician input, and avoid casual approval."
+    },
+    {
+      "id": "seed_protein_powder_whole_foods_v3",
+      "domain": "supplements",
+      "user_query": "Do I need protein powder, or can I build muscle with whole food alone?",
+      "notes": "Must screen for total intake, convenience, budget, and goal rather than overselling supplements."
+    },
+    {
+      "id": "seed_caffeine_training_v3",
+      "domain": "supplements",
+      "user_query": "Is caffeine useful before training, and who should be careful with it?",
+      "notes": "Must screen for blood pressure, anxiety, sleep issues, timing, and dose sensitivity."
+    },
+    {
+      "id": "seed_omega3_general_v3",
+      "domain": "supplements",
+      "user_query": "Should I take omega-3 if I train regularly, or is food enough?",
+      "notes": "Must keep claims measured and screen for diet pattern, fish intake, and medical context."
+    },
+    {
+      "id": "seed_multivitamin_overreliance_v3",
+      "domain": "supplements",
+      "user_query": "I train hard and was thinking a multivitamin will cover everything. Is that a good idea?",
+      "notes": "Must avoid magical thinking and keep supplements secondary to diet quality."
+    },
+    {
+      "id": "seed_soccer_athlete_recovery_v3",
+      "domain": "combined",
+      "user_query": "I play competitive soccer and want to recover better while staying lean. What should I change in training and nutrition?",
+      "notes": "Must screen for schedule, match congestion, body composition goal, and current fueling."
+    },
+    {
+      "id": "seed_grappling_weight_cut_v3",
+      "domain": "combined",
+      "user_query": "I do grappling and need to drop weight without ruining performance. How should I train and eat?",
+      "notes": "Must avoid extreme cutting advice and screen for timeline, current size, hydration, and competition date."
+    },
+    {
+      "id": "seed_master_lifter_joint_limits_v3",
+      "domain": "combined",
+      "user_query": "I am over 50, still lift seriously, and want to keep progressing without beating up my joints. How should I train and eat?",
+      "notes": "Must screen for injuries, recovery, sleep, and current workload."
+    },
+    {
+      "id": "seed_busy_parent_general_health_v3",
+      "domain": "combined",
+      "user_query": "I am a busy parent with 30 minutes a day. I want better health, strength, and weight control. What should I do?",
+      "notes": "Must screen for schedule reality, equipment, fatigue, and eating pattern."
+    },
+    {
+      "id": "seed_office_worker_deconditioned_v3",
+      "domain": "combined",
+      "user_query": "I sit all day, feel weak, and want to get healthier without going all-in on fitness culture. Where do I start?",
+      "notes": "Must screen for medical issues, current activity, preferences, and adherence constraints."
+    },
+    {
+      "id": "seed_pelvic_floor_symptoms_training_v3",
+      "domain": "workout",
+      "user_query": "Exercise makes me feel pelvic heaviness and leaking. How should I approach training?",
+      "notes": "Must be symptom-aware, ask postpartum history and referral context, and avoid pushing impact work."
+    },
+    {
+      "id": "seed_chronic_neck_pain_training_v3",
+      "domain": "workout",
+      "user_query": "I work at a desk and get chronic neck pain. I still want to lift. How should I approach training?",
+      "notes": "Must screen for red flags, diagnosis, triggers, and avoid random neck exercise prescriptions."
+    },
+    {
+      "id": "seed_tendinopathy_return_v3",
+      "domain": "workout",
+      "user_query": "I have been told I have tendinopathy and I want to train without making it worse. What should I know?",
+      "notes": "Must screen for site, severity, loading tolerance, and current rehab status."
+    },
+    {
+      "id": "seed_plant_based_endurance_v3",
+      "domain": "combined",
+      "user_query": "I am plant-based and training for endurance events. How should I fuel and strength train without under-recovering?",
+      "notes": "Must screen for training volume, current intake, energy availability, and protein sources."
+    },
+    {
+      "id": "seed_post_illness_return_v3",
+      "domain": "workout",
+      "user_query": "I was sick for a while and feel deconditioned. How do I return to training without overdoing it?",
+      "notes": "Must screen for current symptoms, medical guidance, baseline capacity, and return-to-activity tolerance."
+    }
+  ]
+}

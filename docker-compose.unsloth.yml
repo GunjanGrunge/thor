@@ -1,0 +1,31 @@
+services:
+  thor-train:
+    build:
+      context: .
+      dockerfile: Dockerfile.unsloth
+    image: thor-unsloth:latest
+    container_name: thor-unsloth-train
+    working_dir: /workspace/Thor
+    volumes:
+      - ./:/workspace/Thor
+      - ./outputs:/workspace/Thor/outputs
+      - ./data:/workspace/Thor/data
+      - ./unsloth_compiled_cache:/root/.cache/unsloth_compiled_cache
+      - ./tmp/hf_home:/root/.cache/huggingface
+    environment:
+      THOR_CONTAINERIZED: "1"
+      WORKSPACE_ROOT: /workspace
+      THOR_DIR: /workspace/Thor
+      PYTORCH_CUDA_ALLOC_CONF: expandable_segments:True,max_split_size_mb:128
+      TORCHDYNAMO_DISABLE: "1"
+      HF_HOME: /root/.cache/huggingface
+    stdin_open: true
+    tty: true
+    shm_size: "16gb"
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]

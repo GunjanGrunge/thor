@@ -1,0 +1,35 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "RawRecord",
+  "type": "object",
+  "required": [
+    "source",
+    "url",
+    "fetched_at",
+    "title",
+    "text"
+  ],
+  "properties": {
+    "source": {
+      "type": "string"
+    },
+    "url": {
+      "type": "string"
+    },
+    "fetched_at": {
+      "type": "string"
+    },
+    "title": {
+      "type": "string"
+    },
+    "text": {
+      "type": "string"
+    },
+    "html_path": {
+      "type": "string"
+    },
+    "metadata": {
+      "type": "object"
+    }
+  }
+}

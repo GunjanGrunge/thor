@@ -1,0 +1,16 @@
+{
+    "seeds":  [
+                  {
+                      "id":  "seed_t2d_weight_loss",
+                      "domain":  "combined",
+                      "user_query":  "I have type 2 diabetes and want a workout plan and meal structure to lose weight. What should I do?",
+                      "notes":  "Must screen for medications, hypoglycemia risk, neuropathy or retinopathy issues, and activity history."
+                  },
+                  {
+                      "id":  "seed_knee_oa_low_impact",
+                      "domain":  "workout",
+                      "user_query":  "I have knee osteoarthritis and want low-impact exercise that helps me stay active and reduce pain.",
+                      "notes":  "Must avoid unsupported exercise bravado and stay evidence-based."
+                  }
+              ]
+}

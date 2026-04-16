@@ -1,0 +1,13 @@
+{
+  "input_grounded_examples": 40,
+  "kept_behavior_examples": 40,
+  "rejected_examples": 0,
+  "domain_counts": {
+    "combined": 12,
+    "nutrition": 10,
+    "supplements": 5,
+    "workout": 13
+  },
+  "dataset_variant": "grounded_behavior_v2",
+  "output_path": "data/sft/final/qwenf1_train_v2_behavior.jsonl"
+}

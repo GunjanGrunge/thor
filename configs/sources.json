@@ -1,0 +1,51 @@
+{
+  "exrx": {
+    "base_url": "https://exrx.net",
+    "seed_urls": [
+      "https://exrx.net/Lists/Directory"
+    ],
+    "enabled": true,
+    "domain": "workout"
+  },
+  "nih_ods": {
+    "base_url": "https://ods.od.nih.gov",
+    "seed_urls": [
+      "https://ods.od.nih.gov/factsheets/list-all/"
+    ],
+    "enabled": true,
+    "domain": "supplements"
+  },
+  "myfooddata": {
+    "base_url": "https://tools.myfooddata.com",
+    "seed_urls": [],
+    "enabled": false,
+    "domain": "nutrition"
+  },
+  "hf_workout": {
+    "base_url": "https://datasets-server.huggingface.co",
+    "dataset": "padilfm/FineCorpus-WorkoutExercise",
+    "enabled": true,
+    "domain": "workout"
+  },
+  "hf_nutrition": {
+    "base_url": "https://datasets-server.huggingface.co",
+    "dataset": "ishaverma/finetuning_dataset",
+    "enabled": true,
+    "domain": "nutrition"
+  },
+  "dsld": {
+    "base_url": "https://api.ods.od.nih.gov/dsld",
+    "enabled": true,
+    "domain": "supplements"
+  },
+  "fdc": {
+    "base_url": "https://api.nal.usda.gov/fdc/v1",
+    "enabled": true,
+    "domain": "nutrition"
+  },
+  "pubmed": {
+    "base_url": "https://eutils.ncbi.nlm.nih.gov/entrez/eutils",
+    "enabled": true,
+    "domain": "science"
+  }
+}

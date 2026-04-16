@@ -1,0 +1,14 @@
+.venv
+.venv_scrapling
+.venv_train
+outputs
+tmp
+unsloth_compiled_cache
+data/raw
+data/embeddings
+data/chunks
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+.git

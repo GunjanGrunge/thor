@@ -1,0 +1,21 @@
+{
+  "queries": [
+    "chicken breast",
+    "egg",
+    "greek yogurt",
+    "oats",
+    "rice",
+    "salmon",
+    "banana",
+    "broccoli",
+    "paneer",
+    "lentils",
+    "peanut butter",
+    "whey protein"
+  ],
+  "data_types": [
+    "Foundation",
+    "SR Legacy",
+    "Survey (FNDDS)"
+  ]
+}

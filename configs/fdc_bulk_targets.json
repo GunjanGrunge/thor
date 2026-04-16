@@ -1,0 +1,17 @@
+{
+  "page_url": "https://fdc.nal.usda.gov/download-datasets/",
+  "datasets": [
+    {
+      "name": "Foundation Foods",
+      "pattern": "FoodData_Central_foundation_food_json_"
+    },
+    {
+      "name": "SR Legacy",
+      "pattern": "FoodData_Central_sr_legacy_food_json_"
+    },
+    {
+      "name": "Survey (FNDDS)",
+      "pattern": "FoodData_Central_survey_food_json_"
+    }
+  ]
+}

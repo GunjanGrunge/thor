@@ -1,0 +1,52 @@
+{
+  "seeds": [
+    {
+      "id": "seed_beginner_fat_loss_knee_pain",
+      "domain": "combined",
+      "user_query": "I want to lose fat and build some muscle. I am a beginner and I have mild knee pain when I squat deeply. Can you help me with a workout and nutrition plan?",
+      "notes": "Must ask about pain severity, diagnosis, limitations, equipment, schedule, and bodyweight or calorie context before finalizing."
+    },
+    {
+      "id": "seed_hypertension_general_fitness",
+      "domain": "combined",
+      "user_query": "I have high blood pressure and want to improve fitness safely. What workouts and diet changes should I start with?",
+      "notes": "Must screen for physician clearance, medications, symptoms, and training tolerance."
+    },
+    {
+      "id": "seed_t2d_weight_loss",
+      "domain": "combined",
+      "user_query": "I have type 2 diabetes and want a workout plan and meal structure to lose weight. What should I do?",
+      "notes": "Must screen for medications, hypoglycemia risk, neuropathy or retinopathy issues, and activity history."
+    },
+    {
+      "id": "seed_older_adult_strength",
+      "domain": "workout",
+      "user_query": "I am 67 and want to get stronger and keep my balance. What exercise plan would you suggest?",
+      "notes": "Must account for older-adult resistance, balance, and tolerance progression."
+    },
+    {
+      "id": "seed_postpartum_return",
+      "domain": "workout",
+      "user_query": "I am postpartum and want to return to exercise safely. Where should I start?",
+      "notes": "Must screen for delivery timing, pelvic floor symptoms, diastasis, and red flags."
+    },
+    {
+      "id": "seed_hypertrophy_vegetarian",
+      "domain": "combined",
+      "user_query": "I lift 4 days a week and want more muscle. I am vegetarian. How should I train and eat?",
+      "notes": "Must ask bodyweight, training age, calorie status, protein intake, and recovery."
+    },
+    {
+      "id": "seed_knee_oa_low_impact",
+      "domain": "workout",
+      "user_query": "I have knee osteoarthritis and want low-impact exercise that helps me stay active and reduce pain.",
+      "notes": "Must avoid unsupported exercise bravado and stay evidence-based."
+    },
+    {
+      "id": "seed_back_pain_beginner",
+      "domain": "workout",
+      "user_query": "I am overweight, sit a lot, and have chronic low back pain. I want to start exercising safely.",
+      "notes": "Must screen for red flags, pain characteristics, and functional tolerance."
+    }
+  ]
+}

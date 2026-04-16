@@ -1,0 +1,16 @@
+{
+  "seeds": [
+    {
+      "id": "seed_triathlon_strength_v3",
+      "domain": "workout",
+      "user_query": "I train for triathlon and want gym work that helps performance without trashing my legs. What should I do?",
+      "notes": "Must screen for training volume, intensity distribution, race calendar, and fatigue."
+    },
+    {
+      "id": "seed_tendinopathy_return_v3",
+      "domain": "workout",
+      "user_query": "I have been told I have tendinopathy and I want to train without making it worse. What should I know?",
+      "notes": "Must screen for site, severity, loading tolerance, and current rehab status."
+    }
+  ]
+}

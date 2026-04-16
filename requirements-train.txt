@@ -1,0 +1,15 @@
+# Training dependencies for QwenF1 Unsloth fine-tuning.
+# Keep this separate from scraping/normalization requirements.
+
+torch>=2.5.0
+transformers>=4.51.0
+datasets>=3.5.0
+trl>=0.17.0
+peft>=0.15.0
+accelerate>=1.6.0
+bitsandbytes>=0.45.0
+sentencepiece>=0.2.0
+protobuf>=5.29.0
+wheel>=0.45.0
+setuptools>=75.0.0
+unsloth>=2026.4.0

@@ -1,0 +1,35 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "EvidenceRecord",
+  "type": "object",
+  "required": [
+    "id",
+    "domain",
+    "source",
+    "record_type",
+    "title",
+    "content",
+    "grounding_urls"
+  ],
+  "properties": {
+    "id": { "type": "string" },
+    "domain": {
+      "type": "string",
+      "enum": ["nutrition", "workout", "supplements", "science", "guidelines", "combined"]
+    },
+    "source": { "type": "string" },
+    "record_type": { "type": "string" },
+    "title": { "type": "string" },
+    "summary": { "type": "string" },
+    "content": { "type": "object" },
+    "tags": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "grounding_urls": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "metadata": { "type": "object" }
+  }
+}
