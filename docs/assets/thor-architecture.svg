@@ -1,0 +1,169 @@
+<svg width="1600" height="920" viewBox="0 0 1600 920" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1600" y2="920" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#F8FBFF"/>
+      <stop offset="1" stop-color="#F4F7FB"/>
+    </linearGradient>
+    <linearGradient id="blueCard" x1="0" y1="0" x2="0" y2="1">
+      <stop stop-color="#EFF6FF"/>
+      <stop offset="1" stop-color="#DBEAFE"/>
+    </linearGradient>
+    <linearGradient id="amberCard" x1="0" y1="0" x2="0" y2="1">
+      <stop stop-color="#FFF7ED"/>
+      <stop offset="1" stop-color="#FFEDD5"/>
+    </linearGradient>
+    <linearGradient id="greenCard" x1="0" y1="0" x2="0" y2="1">
+      <stop stop-color="#ECFDF5"/>
+      <stop offset="1" stop-color="#D1FAE5"/>
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="14" stdDeviation="20" flood-color="#0F172A" flood-opacity="0.08"/>
+    </filter>
+    <marker id="arrowBlue" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto">
+      <path d="M0 0L12 6L0 12V0Z" fill="#2563EB"/>
+    </marker>
+    <marker id="arrowSlate" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto">
+      <path d="M0 0L12 6L0 12V0Z" fill="#475569"/>
+    </marker>
+  </defs>
+
+  <rect width="1600" height="920" rx="28" fill="url(#bg)"/>
+
+  <text x="80" y="92" fill="#0F172A" font-family="Arial, Helvetica, sans-serif" font-size="42" font-weight="700">
+    Thor System Architecture
+  </text>
+  <text x="80" y="130" fill="#475569" font-family="Arial, Helvetica, sans-serif" font-size="22">
+    Evidence plane + consultation model + product experience, designed as a production stack rather than a single-model demo.
+  </text>
+
+  <rect x="70" y="180" width="1460" height="650" rx="30" fill="#FFFFFF" stroke="#E2E8F0"/>
+
+  <text x="135" y="236" fill="#2563EB" font-family="Arial, Helvetica, sans-serif" font-size="20" font-weight="700">
+    EVIDENCE PLANE
+  </text>
+  <text x="625" y="236" fill="#D97706" font-family="Arial, Helvetica, sans-serif" font-size="20" font-weight="700">
+    MODEL PLANE
+  </text>
+  <text x="1075" y="236" fill="#059669" font-family="Arial, Helvetica, sans-serif" font-size="20" font-weight="700">
+    EXPERIENCE PLANE
+  </text>
+
+  <g filter="url(#shadow)">
+    <rect x="110" y="270" width="360" height="500" rx="28" fill="url(#blueCard)" stroke="#93C5FD"/>
+    <rect x="620" y="270" width="360" height="500" rx="28" fill="url(#amberCard)" stroke="#FDBA74"/>
+    <rect x="1130" y="270" width="360" height="500" rx="28" fill="url(#greenCard)" stroke="#86EFAC"/>
+  </g>
+
+  <!-- Evidence icons -->
+  <circle cx="180" cy="340" r="34" fill="#2563EB" fill-opacity="0.10" stroke="#2563EB"/>
+  <path d="M155 334C155 326 166 320 180 320C194 320 205 326 205 334V350C205 358 194 364 180 364C166 364 155 358 155 350V334Z" fill="#2563EB"/>
+  <ellipse cx="180" cy="334" rx="25" ry="10" fill="#DBEAFE"/>
+  <ellipse cx="180" cy="350" rx="25" ry="10" fill="#BFDBFE"/>
+
+  <circle cx="180" cy="456" r="34" fill="#2563EB" fill-opacity="0.10" stroke="#2563EB"/>
+  <path d="M162 440H198L207 456L198 472H162L153 456L162 440Z" fill="#2563EB"/>
+  <circle cx="180" cy="456" r="8" fill="#DBEAFE"/>
+
+  <circle cx="180" cy="572" r="34" fill="#2563EB" fill-opacity="0.10" stroke="#2563EB"/>
+  <rect x="160" y="550" width="40" height="44" rx="8" fill="#2563EB"/>
+  <path d="M169 565H191" stroke="#DBEAFE" stroke-width="4" stroke-linecap="round"/>
+  <path d="M169 575H191" stroke="#DBEAFE" stroke-width="4" stroke-linecap="round"/>
+  <path d="M169 585H184" stroke="#DBEAFE" stroke-width="4" stroke-linecap="round"/>
+
+  <text x="235" y="336" fill="#0F172A" font-family="Arial, Helvetica, sans-serif" font-size="24" font-weight="700">
+    Curated domain corpus
+  </text>
+  <text x="235" y="366" fill="#334155" font-family="Arial, Helvetica, sans-serif" font-size="18">
+    Source ingestion, schema normalization,
+  </text>
+  <text x="235" y="390" fill="#334155" font-family="Arial, Helvetica, sans-serif" font-size="18">
+    deduplication, noise cleaning
+  </text>
+
+  <text x="235" y="452" fill="#0F172A" font-family="Arial, Helvetica, sans-serif" font-size="24" font-weight="700">
+    Retrieval fabric
+  </text>
+  <text x="235" y="482" fill="#334155" font-family="Arial, Helvetica, sans-serif" font-size="18">
+    Chunking, embeddings, evidence windows,
+  </text>
+  <text x="235" y="506" fill="#334155" font-family="Arial, Helvetica, sans-serif" font-size="18">
+    inference-time factual context
+  </text>
+
+  <text x="235" y="568" fill="#0F172A" font-family="Arial, Helvetica, sans-serif" font-size="24" font-weight="700">
+    Grounded supervision
+  </text>
+  <text x="235" y="598" fill="#334155" font-family="Arial, Helvetica, sans-serif" font-size="18">
+    Task-shaped example generation,
+  </text>
+  <text x="235" y="622" fill="#334155" font-family="Arial, Helvetica, sans-serif" font-size="18">
+    validation, rewrite gate, gold QC
+  </text>
+
+  <!-- Model icons -->
+  <circle cx="690" cy="340" r="34" fill="#D97706" fill-opacity="0.10" stroke="#D97706"/>
+  <rect x="668" y="318" width="44" height="44" rx="10" fill="#D97706"/>
+  <rect x="681" y="331" width="18" height="18" rx="4" fill="#FFFBEB"/>
+  <path d="M676 312V302M690 312V302M704 312V302M676 378V368M690 378V368M704 378V368" stroke="#D97706" stroke-width="4" stroke-linecap="round"/>
+
+  <circle cx="690" cy="470" r="34" fill="#D97706" fill-opacity="0.10" stroke="#D97706"/>
+  <path d="M666 488V454C666 441 676 432 690 432C704 432 714 441 714 454V488" fill="#D97706"/>
+  <circle cx="690" cy="453" r="11" fill="#FFFBEB"/>
+
+  <text x="745" y="336" fill="#0F172A" font-family="Arial, Helvetica, sans-serif" font-size="24" font-weight="700">
+    Consultation-tuned adapter
+  </text>
+  <text x="745" y="366" fill="#334155" font-family="Arial, Helvetica, sans-serif" font-size="18">
+    LoRA fine-tuning for screening,
+  </text>
+  <text x="745" y="390" fill="#334155" font-family="Arial, Helvetica, sans-serif" font-size="18">
+    adaptation, planning, reasoning behavior
+  </text>
+
+  <text x="745" y="466" fill="#0F172A" font-family="Arial, Helvetica, sans-serif" font-size="24" font-weight="700">
+    Inference engine
+  </text>
+  <text x="745" y="496" fill="#334155" font-family="Arial, Helvetica, sans-serif" font-size="18">
+    Merges user constraints with retrieved
+  </text>
+  <text x="745" y="520" fill="#334155" font-family="Arial, Helvetica, sans-serif" font-size="18">
+    evidence before recommendation generation
+  </text>
+
+  <!-- Product icons -->
+  <circle cx="1200" cy="340" r="34" fill="#059669" fill-opacity="0.10" stroke="#059669"/>
+  <path d="M1200 316L1220 324V341C1220 355 1211 368 1200 374C1189 368 1180 355 1180 341V324L1200 316Z" fill="#059669"/>
+  <path d="M1192 342L1198 348L1209 334" stroke="#ECFDF5" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <circle cx="1200" cy="470" r="34" fill="#059669" fill-opacity="0.10" stroke="#059669"/>
+  <rect x="1178" y="448" width="44" height="44" rx="10" fill="#059669"/>
+  <path d="M1188 463H1212M1188 473H1212M1188 483H1204" stroke="#ECFDF5" stroke-width="4" stroke-linecap="round"/>
+
+  <text x="1255" y="336" fill="#0F172A" font-family="Arial, Helvetica, sans-serif" font-size="24" font-weight="700">
+    Policy + safety layer
+  </text>
+  <text x="1255" y="366" fill="#334155" font-family="Arial, Helvetica, sans-serif" font-size="18">
+    Guardrails, output shaping,
+  </text>
+  <text x="1255" y="390" fill="#334155" font-family="Arial, Helvetica, sans-serif" font-size="18">
+    response eligibility and trust controls
+  </text>
+
+  <text x="1255" y="466" fill="#0F172A" font-family="Arial, Helvetica, sans-serif" font-size="24" font-weight="700">
+    Product rendering
+  </text>
+  <text x="1255" y="496" fill="#334155" font-family="Arial, Helvetica, sans-serif" font-size="18">
+    Evidence UX, citation surfaces,
+  </text>
+  <text x="1255" y="520" fill="#334155" font-family="Arial, Helvetica, sans-serif" font-size="18">
+    clean guidance delivery to the user
+  </text>
+
+  <!-- arrows -->
+  <path d="M470 520H585" stroke="#2563EB" stroke-width="5" marker-end="url(#arrowBlue)"/>
+  <path d="M980 520H1095" stroke="#475569" stroke-width="5" marker-end="url(#arrowSlate)"/>
+  <path d="M345 676C345 744 666 812 800 812C934 812 1235 744 1235 676" stroke="#94A3B8" stroke-width="3" stroke-dasharray="8 8"/>
+  <text x="640" y="854" fill="#64748B" font-family="Arial, Helvetica, sans-serif" font-size="18">
+    Feedback loop: stronger corpus - better supervision - sharper model behavior - cleaner product experience
+  </text>
+</svg>

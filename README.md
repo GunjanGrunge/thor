@@ -74,22 +74,58 @@ This is a stronger long-term position than training a single model and hoping it
 
 ## System Architecture
 
-Thor uses a three-layer architecture.
+Thor is structured like a production system, not a single-model experiment.
+
+| Domain Layer | Primary Asset | Operational Role |
+| --- | --- | --- |
+| `Evidence Plane` | normalized corpus, chunks, embeddings, grounded examples | creates the factual substrate |
+| `Model Plane` | consultation-tuned LoRA adapter | learns how to ask, screen, adapt, and reason |
+| `Experience Plane` | policies, rendering, citations, UX | turns model output into a trustworthy product |
+
+<p align="center">
+  <img src="docs/assets/thor-architecture.svg" alt="Thor architecture diagram" width="100%">
+</p>
 
 ```mermaid
 flowchart LR
-    A[Raw Domain Knowledge] --> B[Normalization Layer]
-    B --> C[Cleaned Evidence Corpus]
-    C --> D[Chunking + Embeddings]
-    D --> E[Retrieval Layer]
-    C --> F[Grounded Example Generation]
-    F --> G[Validation + Gold QC]
-    G --> H[Phased Strict SFT Sets]
-    H --> I[LoRA Fine-Tuning]
-    E --> J[Inference-Time Evidence Context]
-    I --> K[Consultation Model]
-    J --> K
-    K --> L[Product Layer: Guidance, Safety, Citations, UX]
+    subgraph EP["Evidence Plane"]
+        A[Raw Domain Sources]
+        B[Schema Normalization]
+        C[Cleaned Evidence Corpus]
+        D[Chunking + Embeddings]
+        E[Grounded Example Generation]
+        F[Validation + Gold QC]
+        G[Strict Phased Training Sets]
+        A --> B --> C
+        C --> D
+        C --> E --> F --> G
+    end
+
+    subgraph MP["Model Plane"]
+        H[LoRA Fine-Tuning]
+        I[Consultation Model]
+        H --> I
+    end
+
+    subgraph XP["Experience Plane"]
+        J[Safety Policies]
+        K[Grounded Rendering]
+        L[Citation / Evidence UX]
+        M[End-User Product Experience]
+        J --> K --> L --> M
+    end
+
+    D --> N[Retrieval Context]
+    G --> H
+    N --> I
+    I --> J
+
+    classDef evidence fill:#EAF3FF,stroke:#2563EB,color:#0F172A,stroke-width:1.5px;
+    classDef model fill:#FFF7E8,stroke:#F59E0B,color:#111827,stroke-width:1.5px;
+    classDef product fill:#ECFDF5,stroke:#10B981,color:#111827,stroke-width:1.5px;
+    class A,B,C,D,E,F,G,N evidence;
+    class H,I model;
+    class J,K,L,M product;
 ```
 
 ### 1. Consultation Model
@@ -117,7 +153,7 @@ It is responsible for:
 
 ### 3. Product Layer
 
-The product layer is optimized for **trust and usability**.
+The product layer is optimized for **trust, explainability, and controlled delivery**.
 
 It handles:
 
@@ -128,12 +164,25 @@ It handles:
 - evidence-linked user experiences beyond raw model output
 
 ```mermaid
-flowchart TB
-    U[User Profile + Goal + Constraints] --> Q[Consultation Model]
-    R[Retrieved Evidence Context] --> Q
-    Q --> P[Reasoned Plan / Clarification / Recommendation]
-    P --> X[Product Rendering Layer]
-    X --> Y[Grounded End-User Experience]
+flowchart LR
+    U[User Goal + Constraints]
+    R[Retrieved Evidence Window]
+    Q[Consultation Model]
+    P[Reasoned Recommendation]
+    X[Policy + Safety Layer]
+    Y[Product Rendering]
+    Z[Trustworthy End-User Output]
+
+    U --> Q
+    R --> Q
+    Q --> P --> X --> Y --> Z
+
+    classDef edge fill:#F8FAFC,stroke:#64748B,color:#0F172A,stroke-width:1.2px;
+    classDef core fill:#FFF7E8,stroke:#F59E0B,color:#111827,stroke-width:1.5px;
+    classDef out fill:#ECFDF5,stroke:#10B981,color:#111827,stroke-width:1.5px;
+    class U,R edge;
+    class Q,P,X core;
+    class Y,Z out;
 ```
 
 ---
@@ -189,20 +238,38 @@ This is a cleaner research and engineering posture than “more rows = better mo
 
 ## Data Filtering Strategy
 
-Thor is built around **signal extraction**, not just corpus acquisition.
+Thor is built around **signal extraction**, not corpus inflation.
 
-The filtering pipeline is one of the main intellectual assets of the repo.
+The filtering system is one of the highest-value parts of the repo because it controls what reaches retrieval, what reaches supervision, and what never touches the model at all.
+
+| Stage | Filters Out | Preserves |
+| --- | --- | --- |
+| `Normalization` | source-format chaos | stable structured evidence |
+| `Deduplication` | repeated evidence and frequency inflation | useful evidence diversity |
+| `Noise Cleaning` | boilerplate and scraper residue | semantically relevant content |
+| `Grounded Generation` | raw-to-chat leakage | task-shaped consultation supervision |
+| `Gold QC` | weak or unsafe examples | strict final training rows |
 
 ```mermaid
 flowchart LR
-    A[Collected Records] --> B[Schema Normalization]
-    B --> C[Deduplication]
-    C --> D[Noise Removal]
-    D --> E[Retrieval Text Construction]
-    E --> F[Grounded Generation]
-    F --> G[Validation]
-    G --> H[Gold QC]
-    H --> I[Strict Final Training Rows]
+    A[Collected Records]
+    B[Schema Normalization]
+    C[Deduplication]
+    D[Noise Cleaning]
+    E[Retrieval Text Construction]
+    F[Grounded Dialogue Synthesis]
+    G[Validation]
+    H[Gold QC Gate]
+    I[Strict Final Training Rows]
+
+    A --> B --> C --> D --> E --> F --> G --> H --> I
+
+    classDef base fill:#EAF3FF,stroke:#2563EB,color:#0F172A,stroke-width:1.5px;
+    classDef gate fill:#FFF7E8,stroke:#F59E0B,color:#111827,stroke-width:1.5px;
+    classDef final fill:#ECFDF5,stroke:#10B981,color:#111827,stroke-width:1.5px;
+    class A,B,C,D,E,F,G base;
+    class H gate;
+    class I final;
 ```
 
 ### Normalization First
@@ -267,22 +334,60 @@ They are filtered into explicit buckets such as:
 
 Only the highest-trust rows make it into strict phased training.
 
+```mermaid
+flowchart TB
+    A[Candidate Example] --> B{Structural Validity}
+    B -- Fail --> R[Reject]
+    B -- Pass --> C{Grounding Quality}
+    C -- Weak --> W[Needs Rewrite]
+    C -- Strong --> D{Consultation Quality}
+    D -- Weak --> W
+    D -- Strong --> K[Keep]
+
+    classDef source fill:#F8FAFC,stroke:#64748B,color:#0F172A,stroke-width:1.2px;
+    classDef judge fill:#FFF7E8,stroke:#F59E0B,color:#111827,stroke-width:1.5px;
+    classDef pass fill:#ECFDF5,stroke:#10B981,color:#111827,stroke-width:1.5px;
+    classDef fail fill:#FEF2F2,stroke:#DC2626,color:#111827,stroke-width:1.5px;
+    class A source;
+    class B,C,D judge;
+    class K pass;
+    class R,W fail;
+```
+
 ---
 
 ## Training Strategy
 
-Thor uses a capital-efficient, research-friendly training loop.
+Thor uses a capital-efficient, research-friendly training loop built to reduce wasted GPU spend and keep behavior quality ahead of scale.
+
+| Objective | Strategy |
+| --- | --- |
+| De-risk training spend | smoke test before full run |
+| Preserve behavioral quality | strict phased data before broad scale |
+| Keep iteration velocity high | LoRA instead of heavyweight retraining |
+| Avoid infrastructure waste | same-instance Docker reuse on EC2 |
+| Evaluate under real conditions | retrieval-bound inference as the target path |
 
 ```mermaid
-flowchart TB
-    A[Corpus Build] --> B[Retrieval Assets]
-    B --> C[Grounded Example Generation]
-    C --> D[Validation]
-    D --> E[Gold QC]
-    E --> F[Strict Phased Dataset]
-    F --> G[LoRA Smoke Run]
-    G --> H[Full Training Run]
-    H --> I[Retrieval-Bound Evaluation]
+flowchart LR
+    A[Evidence Corpus]
+    B[Retrieval Assets]
+    C[Grounded Training Candidates]
+    D[Gold QC]
+    E[Strict Dataset]
+    F[LoRA Smoke Run]
+    G[Full Fine-Tuning Run]
+    H[Retrieval-Bound Evaluation]
+    I[Deployment-Ready Behavior]
+
+    A --> B --> C --> D --> E --> F --> G --> H --> I
+
+    classDef prep fill:#EAF3FF,stroke:#2563EB,color:#0F172A,stroke-width:1.5px;
+    classDef train fill:#FFF7E8,stroke:#F59E0B,color:#111827,stroke-width:1.5px;
+    classDef ship fill:#ECFDF5,stroke:#10B981,color:#111827,stroke-width:1.5px;
+    class A,B,C,D,E prep;
+    class F,G train;
+    class H,I ship;
 ```
 
 ### Key Training Decisions
@@ -303,6 +408,22 @@ This approach is:
 - easier to audit
 - less vulnerable to data drift
 - more aligned with how the end product will actually run
+
+```mermaid
+flowchart TB
+    A[Cheap Smoke Validation]
+    B[Behavior Verification]
+    C[Scale-Up Decision]
+    D[Full GPU Spend]
+    E[Retrieval-Bound Evaluation]
+
+    A --> B --> C --> D --> E
+
+    classDef low fill:#F8FAFC,stroke:#64748B,color:#0F172A,stroke-width:1.2px;
+    classDef spend fill:#FFF7E8,stroke:#F59E0B,color:#111827,stroke-width:1.5px;
+    class A,B,C,E low;
+    class D spend;
+```
 
 ---
 
@@ -352,27 +473,51 @@ HOST=<ec2-public-dns> bash scripts/thor_ec2_ssh_wsl.sh bash /home/ubuntu/scripts
 ## Visual Logic
 
 ```mermaid
-flowchart TD
-    A[Generic Fitness LLM Failure Mode]
-    A --> A1[Weak screening]
-    A --> A2[Generic prescriptions]
-    A --> A3[Confident hallucination]
-    A --> A4[No evidence traceability]
+flowchart LR
+    subgraph Failure["Generic LLM Failure Pattern"]
+        A1[Weak Screening]
+        A2[Generic Prescriptions]
+        A3[Hallucinated Detail]
+        A4[No Traceability]
+    end
 
-    B[Thor Design Response]
-    B --> B1[Consultation fine-tuning]
-    B --> B2[Strict filtering and QC]
-    B --> B3[Retrieval-backed factual depth]
-    B --> B4[Product-layer grounding]
+    subgraph Thor["Thor Response Pattern"]
+        B1[Consultation Fine-Tuning]
+        B2[Strict Filtering + QC]
+        B3[Retrieval-Backed Depth]
+        B4[Product-Layer Grounding]
+    end
+
+    A1 --> B1
+    A2 --> B2
+    A3 --> B3
+    A4 --> B4
+
+    classDef risk fill:#FEF2F2,stroke:#DC2626,color:#111827,stroke-width:1.5px;
+    classDef resp fill:#ECFDF5,stroke:#10B981,color:#111827,stroke-width:1.5px;
+    class A1,A2,A3,A4 risk;
+    class B1,B2,B3,B4 resp;
 ```
 
 ```mermaid
 flowchart LR
-    U[User Goal + Constraints] --> S[Screening Questions]
-    S --> P[Personalized Reasoning]
-    P --> R[Retrieved Evidence]
-    R --> G[Grounded Guidance]
-    G --> C[Trustworthy Product Output]
+    U[User Goal + Constraints]
+    S[Screening Questions]
+    P[Personalized Reasoning]
+    R[Retrieved Evidence]
+    G[Grounded Guidance]
+    C[Trustworthy Product Output]
+
+    U --> S --> P
+    R --> P
+    P --> G --> C
+
+    classDef input fill:#F8FAFC,stroke:#64748B,color:#0F172A,stroke-width:1.2px;
+    classDef logic fill:#FFF7E8,stroke:#F59E0B,color:#111827,stroke-width:1.5px;
+    classDef out fill:#ECFDF5,stroke:#10B981,color:#111827,stroke-width:1.5px;
+    class U,R input;
+    class S,P,G logic;
+    class C out;
 ```
 
 ---
