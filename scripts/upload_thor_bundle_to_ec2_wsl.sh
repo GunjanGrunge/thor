@@ -17,7 +17,7 @@ tar -czf "$BUNDLE_PATH" \
   requirements-train.txt \
   .env.example \
   scripts \
-  data/sft/final/qwenf1_train_phase12_strict_gold.jsonl
+  data/sft/final
 
 bash /mnt/c/Users/Bot/Desktop/Thor/scripts/thor_ec2_ssh_wsl.sh mkdir -p "$REMOTE_DIR"
 scp -o StrictHostKeyChecking=accept-new -i "${KEY_DEST:-$HOME/.ssh/thor-training-20260416-184056.pem}" \

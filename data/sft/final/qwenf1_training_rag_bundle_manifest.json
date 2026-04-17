@@ -1,0 +1,85 @@
+{
+  "generated_at": "2026-04-17T12:49:15.067312+00:00",
+  "training": {
+    "dataset_path": "C:\\Users\\Bot\\Desktop\\Thor\\data\\sft\\final\\qwenf1_train_current_ready.jsonl",
+    "dataset_examples": 100,
+    "manifest_path": "C:\\Users\\Bot\\Desktop\\Thor\\data\\sft\\final\\qwenf1_train_current_ready_manifest.json",
+    "manifest": {
+      "strict_input": "data/sft/final/qwenf1_train_phase12_strict_gold.jsonl",
+      "behavior_input": "data/sft/final/qwenf1_train_v2_behavior.jsonl",
+      "output": "data/sft/final/qwenf1_train_current_ready.jsonl",
+      "strict_examples_kept": 99,
+      "behavior_unique_examples_added": 1,
+      "total_examples": 100,
+      "domain_counts": {
+        "combined": 25,
+        "workout": 25,
+        "supplements": 20,
+        "nutrition": 26,
+        "condition_aware": 4
+      },
+      "strict_invalid_lines_skipped": [
+        40
+      ],
+      "behavior_invalid_lines_skipped": [],
+      "notes": [
+        "Starts from the clean phase12 strict gold set.",
+        "Adds only deduplicated unique rows from qwenf1_train_v2_behavior.",
+        "Avoids the older broad qwenf1_train_v1 corpus.",
+        "Skips blank or malformed JSONL lines instead of failing the entire build."
+      ]
+    }
+  },
+  "rag": {
+    "normalized_sources": {
+      "fdc": 13590,
+      "nih_ods": 79,
+      "dsld": 460,
+      "exrx": 1173,
+      "musclewiki": 524,
+      "muscleandstrength": 0,
+      "cdc": 5,
+      "medlineplus": 4,
+      "who": 1,
+      "hhs": 2,
+      "acsm": 1,
+      "nia": 1,
+      "aha": 3,
+      "acog": 1,
+      "pubmed": 3295,
+      "pmc": 576,
+      "harvard_supplements": 5,
+      "nasm": 9,
+      "external_nutrition": 3
+    },
+    "source_index_path": "C:\\Users\\Bot\\Desktop\\Thor\\data\\ingestion\\source_index.json",
+    "source_index_summary": {
+      "total_records": 19732,
+      "distinct_sources": 18
+    },
+    "ingestion_manifest_path": "C:\\Users\\Bot\\Desktop\\Thor\\data\\ingestion\\manifest.json",
+    "ingestion_manifest": {
+      "cleaned_records": 19080,
+      "chunks": 59230,
+      "source_path": "C:\\Users\\Bot\\Desktop\\Thor\\data\\normalized\\evidence_all.jsonl",
+      "cleaned_path": "C:\\Users\\Bot\\Desktop\\Thor\\data\\ingestion\\evidence_cleaned.jsonl",
+      "chunks_path": "C:\\Users\\Bot\\Desktop\\Thor\\data\\ingestion\\evidence_chunks.jsonl"
+    },
+    "embedding_manifest_path": "C:\\Users\\Bot\\Desktop\\Thor\\data\\embeddings\\sentence-transformers__all-MiniLM-L6-v2\\manifest.json",
+    "embedding_status": "current",
+    "embedding_manifest": {
+      "model": "sentence-transformers/all-MiniLM-L6-v2",
+      "input_path": "data\\ingestion\\evidence_chunks.jsonl",
+      "metadata_path": "C:\\Users\\Bot\\Desktop\\Thor\\data\\embeddings\\sentence-transformers__all-MiniLM-L6-v2\\metadata.jsonl",
+      "embeddings_path": "C:\\Users\\Bot\\Desktop\\Thor\\data\\embeddings\\sentence-transformers__all-MiniLM-L6-v2\\embeddings.npy",
+      "records": 59230,
+      "dimensions": 384,
+      "normalized": true
+    }
+  },
+  "notes": [
+    "Training data stays separate from the RAG corpus.",
+    "The source index is the durable ledger for extracted evidence provenance.",
+    "If embeddings are stale or missing, regenerate them from data/ingestion/evidence_chunks.jsonl."
+  ]
+}

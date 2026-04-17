@@ -1,27 +1,44 @@
-.env
-.venv/
-.venv_scrapling/
-.venv_train/
+# Environments
+.venv*/
+venv/
 __pycache__/
 *.pyc
 
-tmp/
-outputs/
-unsloth_compiled_cache/
-
-*.pem
-*.key
-
+# Models & Large Data
+outputs/models/
+*.gguf
+*.safetensors
+*.bin
 data/raw/
+data/sft/seed/
+data/sft/tmp/
 data/embeddings/
 data/ingestion/
 data/normalized/
-data/eval/
+data/parsed/
 data/sft/archive/
-data/sft/standalone/
+data/eval/
+data/sft/*.jsonl
 
-data/sft/final/qwenf1_train_v1.jsonl
-data/sft/final/qwenf1_train_v1_fullcoverage.jsonl
+# Build & Cache
+unsloth_compiled_cache/
+nohup.out
+tmp/
 
-*.tar.gz
+# Infrastructure & Private Logs
+.env
+.aws/
+thor_train_expert.log
 *.tgz
+*.ps1
+*.sh
+check_training.ps1
+SCRATCH/
+
+# Research Privacy
+docs/Research_Paper_Draft.md
+Research_Paper_Draft.md
+
+# OS
+.DS_Store
+Thumbs.db

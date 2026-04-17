@@ -23,6 +23,7 @@ export AWS_REGION="$(read_env_val AWS_REGION)"
 export EC2_HOST
 export EC2_KEY_PATH="$HOME/.ssh/thor-train.pem"
 export EC2_INSTANCE_ID
+export UNSLOTH_TRAIN_DATA="data/sft/final/qwenf1_train_current_ready.jsonl"
 
 RUN_ID="$(date +%Y%m%d_%H%M%S)"
 LOG_PATH="outputs/qwenf1/train_logs/orchestrator_${RUN_ID}.log"

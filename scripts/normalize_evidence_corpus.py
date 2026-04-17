@@ -13,6 +13,7 @@ from common import DATA_DIR, stable_id, write_jsonl
 
 RAW_DIR = DATA_DIR / "raw"
 NORM_DIR = DATA_DIR / "normalized"
+PARSED_DIR = DATA_DIR / "parsed"
 
 
 def load_text(path: Path) -> str:
@@ -20,6 +21,14 @@ def load_text(path: Path) -> str:
 
 
 def clean_whitespace(text: str) -> str:
+    text = text.replace("\u00a0", " ")
+    text = text.replace("Â®", "®")
+    text = text.replace("Â©", "©")
+    text = text.replace("â€™", "'")
+    text = text.replace("â€œ", '"').replace("â€\u009d", '"')
+    text = text.replace("â€“", "-").replace("â€”", "-")
+    text = text.replace("â‰¥", ">=")
+    text = text.replace("â‰¤", "<=")
     return re.sub(r"\s+", " ", text).strip()
 
 
@@ -44,6 +53,27 @@ def html_to_text_and_sections(html: str) -> tuple[str, dict[str, str]]:
 def compact_sections(sections: dict[str, str], limit: int = 12) -> dict[str, str]:
     items = list(sections.items())[:limit]
     return {k: v[:4000] for k, v in items}
+
+
+def markdown_to_sections(markdown: str) -> dict[str, str]:
+    sections: dict[str, list[str]] = {}
+    current = "overview"
+    sections[current] = []
+    for raw_line in markdown.splitlines():
+        line = raw_line.strip()
+        if not line:
+            continue
+        if line.startswith("#"):
+            heading = clean_whitespace(line.lstrip("#").strip()).lower()
+            current = heading or current
+            sections.setdefault(current, [])
+            continue
+        sections.setdefault(current, []).append(line)
+    return {
+        heading: clean_whitespace("\n".join(lines))[:4000]
+        for heading, lines in sections.items()
+        if lines
+    }
 
 
 def nutrient_map(food_nutrients: list[dict[str, Any]]) -> dict[str, dict[str, Any]]:
@@ -285,6 +315,52 @@ def normalize_musclewiki() -> list[dict[str, Any]]:
     return records
 
 
+def normalize_muscleandstrength() -> list[dict[str, Any]]:
+    raw_dir = RAW_DIR / "muscleandstrength"
+    if not raw_dir.exists():
+        return []
+    records: list[dict[str, Any]] = []
+    for meta_path in sorted(raw_dir.glob("*.json")):
+        if meta_path.name == "manifest.json":
+            continue
+        meta = json.loads(load_text(meta_path))
+        html_path = meta_path.with_name(meta["html_path"])
+        if not html_path.exists():
+            continue
+        text, sections = html_to_text_and_sections(load_text(html_path))
+        page_kind = meta.get("page_kind") or "unknown"
+        # Build tags based on page kind and metadata
+        tags = ["workout", "exercise", "secondary_source", "muscleandstrength", page_kind]
+        muscle = meta.get("target_muscle") or meta.get("muscle_or_equipment") or ""
+        equipment = meta.get("equipment") or ""
+        level = meta.get("experience_level") or ""
+        if muscle:
+            tags.append(muscle.lower().replace(" ", "_"))
+        if equipment:
+            tags.append(equipment.lower().replace(" ", "_"))
+        records.append(
+            {
+                "id": stable_id("muscleandstrength", meta["url"]),
+                "domain": "workout",
+                "source": "muscleandstrength",
+                "record_type": "exercise_detail_page" if "exercise" in page_kind else "workout_plan_page",
+                "title": meta.get("title") or meta_path.stem,
+                "summary": text[:500],
+                "content": {
+                    "sections": compact_sections(sections),
+                    "text": text[:12000],
+                    "target_muscle": muscle,
+                    "equipment": equipment,
+                    "experience_level": level,
+                },
+                "tags": tags,
+                "grounding_urls": [meta["url"]],
+                "metadata": {"page_kind": page_kind},
+            }
+        )
+    return records
+
+
 def normalize_pubmed() -> list[dict[str, Any]]:
     payload = json.loads(load_text(RAW_DIR / "pubmed" / "reviews.json"))
     records: list[dict[str, Any]] = []
@@ -359,6 +435,98 @@ def normalize_pmc() -> list[dict[str, Any]]:
     return records
 
 
+def normalize_parsed_pdf_source(
+    source: str,
+    domain: str,
+    record_type: str,
+    tags: list[str],
+) -> list[dict[str, Any]]:
+    """Generic normalizer for PDFs parsed by LlamaCloud or Nutrient DWS.
+
+    Reads from data/parsed/llamaparse/<source>/ and data/parsed/nutrient/<source>/.
+    Each parsed JSON file has a 'documents' list with 'text' fields.
+    """
+    records: list[dict[str, Any]] = []
+    seen_urls: set[str] = set()
+    search_dirs = [
+        PARSED_DIR / "llamaparse" / source,
+        PARSED_DIR / "nutrient" / source,
+        PARSED_DIR / "local_fitz" / source,
+    ]
+    for search_dir in search_dirs:
+        if not search_dir.exists():
+            continue
+        for parsed_path in sorted(search_dir.glob("*.json")):
+            try:
+                payload = json.loads(parsed_path.read_text(encoding="utf-8"))
+            except Exception:
+                continue
+            src_doc = payload.get("source_document", {})
+            url = src_doc.get("url", "")
+            if url in seen_urls:
+                continue
+            if url:
+                seen_urls.add(url)
+            title = src_doc.get("title") or parsed_path.stem
+            # Concatenate text across all parsed document chunks
+            doc_texts = [
+                doc.get("text", "") for doc in payload.get("documents", []) if doc.get("text")
+            ]
+            full_text = "\n\n".join(
+                doc_texts
+            )
+            full_text = clean_whitespace(full_text)
+            meta = src_doc.get("metadata", {})
+            record_tags = list(tags)
+            category = meta.get("category", "")
+            if category:
+                record_tags.append(category)
+            provider = payload.get("parser", {}).get("provider", "unknown")
+            section_candidates: dict[str, str] = {}
+            for doc_text in doc_texts:
+                for heading, value in markdown_to_sections(doc_text).items():
+                    if heading not in section_candidates and value:
+                        section_candidates[heading] = value
+            records.append(
+                {
+                    "id": stable_id(source, url or str(parsed_path)),
+                    "domain": domain,
+                    "source": source,
+                    "record_type": record_type,
+                    "title": title,
+                    "summary": full_text[:500],
+                    "content": {
+                        "text": full_text[:20000],
+                        "sections": compact_sections(section_candidates) if section_candidates else {},
+                        "category": category,
+                        "provider": provider,
+                    },
+                    "tags": record_tags + ([provider] if provider and provider not in record_tags else []),
+                    "grounding_urls": [url] if url else [],
+                    "metadata": meta,
+                }
+            )
+    return records
+
+
+def normalize_nasm_parsed() -> list[dict[str, Any]]:
+    return normalize_parsed_pdf_source(
+        source="nasm",
+        domain="workout",
+        record_type="professional_guide",
+        tags=["workout", "nasm", "professional", "pdf"],
+    )
+
+
+def normalize_external_nutrition() -> list[dict[str, Any]]:
+    return normalize_parsed_pdf_source(
+        source="external_nutrition",
+        domain="nutrition",
+        record_type="expert_textbook",
+        tags=["nutrition", "expert", "textbook", "sports_nutrition", "pdf"],
+    )
+
+
 def write_source_file(name: str, records: list[dict[str, Any]]) -> None:
     write_jsonl(NORM_DIR / f"evidence_{name}.jsonl", records)
     print(f"wrote {len(records)} records to evidence_{name}.jsonl")
@@ -383,6 +551,7 @@ def main() -> None:
         "dsld": normalize_dsld(),
         "exrx": normalize_exrx(),
         "musclewiki": normalize_musclewiki(),
+        "muscleandstrength": normalize_muscleandstrength(),
         "cdc": normalize_page_bucket("cdc_guidelines", "cdc", "guidelines", "guideline_page", ["guidelines", "workout", "cdc"]),
         "medlineplus": normalize_page_bucket("medlineplus", "medlineplus", "guidelines", "reference_page", ["guidelines", "nutrition", "workout", "medlineplus"]),
         "who": normalize_page_bucket("who_guidelines", "who", "guidelines", "guideline_page", ["guidelines", "workout", "who"]),
@@ -393,6 +562,15 @@ def main() -> None:
         "acog": normalize_page_bucket("acog_guidelines", "acog", "guidelines", "guideline_page", ["guidelines", "workout", "pregnancy", "acog"]),
         "pubmed": normalize_pubmed(),
         "pmc": normalize_pmc(),
+        "harvard_supplements": normalize_page_bucket(
+            "harvard_supplements",
+            "harvard_supplements",
+            "supplements",
+            "guideline_page",
+            ["supplements", "workout", "harvard", "evidence_based"],
+        ),
+        "nasm": normalize_nasm_parsed(),
+        "external_nutrition": normalize_external_nutrition(),
     }
     for source, records in records_by_source.items():
         write_source_file(source, records)

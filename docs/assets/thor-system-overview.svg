@@ -1,0 +1,88 @@
+<svg width="1200" height="700" viewBox="0 0 1200 700" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1200" y2="700" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#07111F"/>
+      <stop offset="1" stop-color="#10233C"/>
+    </linearGradient>
+    <linearGradient id="card" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#132844"/>
+      <stop offset="1" stop-color="#0C1930"/>
+    </linearGradient>
+    <linearGradient id="accentA" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#49D9B3"/>
+      <stop offset="1" stop-color="#2CA7FF"/>
+    </linearGradient>
+    <linearGradient id="accentB" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#FFD166"/>
+      <stop offset="1" stop-color="#FF7B54"/>
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="18" stdDeviation="20" flood-color="#02060D" flood-opacity="0.35"/>
+    </filter>
+  </defs>
+
+  <rect width="1200" height="700" rx="28" fill="url(#bg)"/>
+  <circle cx="1030" cy="120" r="180" fill="#17345C" fill-opacity="0.4"/>
+  <circle cx="170" cy="590" r="150" fill="#0C5F78" fill-opacity="0.25"/>
+
+  <text x="80" y="92" fill="#EAF4FF" font-family="Segoe UI, Arial, sans-serif" font-size="38" font-weight="700">Thor System Overview</text>
+  <text x="80" y="126" fill="#9CB4CE" font-family="Segoe UI, Arial, sans-serif" font-size="20">Evidence ingestion, grounded training, retrieval, and serving in one pipeline</text>
+
+  <g filter="url(#shadow)">
+    <rect x="80" y="180" width="250" height="160" rx="24" fill="url(#card)" stroke="#2A466D"/>
+    <rect x="80" y="380" width="250" height="160" rx="24" fill="url(#card)" stroke="#2A466D"/>
+    <rect x="395" y="180" width="250" height="160" rx="24" fill="url(#card)" stroke="#2A466D"/>
+    <rect x="395" y="380" width="250" height="160" rx="24" fill="url(#card)" stroke="#2A466D"/>
+    <rect x="710" y="180" width="250" height="160" rx="24" fill="url(#card)" stroke="#2A466D"/>
+    <rect x="710" y="380" width="250" height="160" rx="24" fill="url(#card)" stroke="#2A466D"/>
+  </g>
+
+  <rect x="100" y="202" width="78" height="12" rx="6" fill="url(#accentA)"/>
+  <text x="100" y="245" fill="#F4F8FC" font-family="Segoe UI, Arial, sans-serif" font-size="26" font-weight="700">1. Source Intake</text>
+  <text x="100" y="278" fill="#AFC3D8" font-family="Segoe UI, Arial, sans-serif" font-size="18">PubMed, PMC, NASM,</text>
+  <text x="100" y="304" fill="#AFC3D8" font-family="Segoe UI, Arial, sans-serif" font-size="18">guidelines, ODS, DSLD, ExRx</text>
+
+  <rect x="100" y="402" width="78" height="12" rx="6" fill="url(#accentB)"/>
+  <text x="100" y="445" fill="#F4F8FC" font-family="Segoe UI, Arial, sans-serif" font-size="26" font-weight="700">2. Normalize</text>
+  <text x="100" y="478" fill="#AFC3D8" font-family="Segoe UI, Arial, sans-serif" font-size="18">Unified schema, dedupe,</text>
+  <text x="100" y="504" fill="#AFC3D8" font-family="Segoe UI, Arial, sans-serif" font-size="18">cleaning, chunk preparation</text>
+
+  <rect x="415" y="202" width="78" height="12" rx="6" fill="url(#accentA)"/>
+  <text x="415" y="245" fill="#F4F8FC" font-family="Segoe UI, Arial, sans-serif" font-size="26" font-weight="700">3. Retrieve</text>
+  <text x="415" y="278" fill="#AFC3D8" font-family="Segoe UI, Arial, sans-serif" font-size="18">Embed chunks and query</text>
+  <text x="415" y="304" fill="#AFC3D8" font-family="Segoe UI, Arial, sans-serif" font-size="18">the evidence index at runtime</text>
+
+  <rect x="415" y="402" width="78" height="12" rx="6" fill="url(#accentB)"/>
+  <text x="415" y="445" fill="#F4F8FC" font-family="Segoe UI, Arial, sans-serif" font-size="26" font-weight="700">4. Grounded SFT</text>
+  <text x="415" y="478" fill="#AFC3D8" font-family="Segoe UI, Arial, sans-serif" font-size="18">Generate expert examples,</text>
+  <text x="415" y="504" fill="#AFC3D8" font-family="Segoe UI, Arial, sans-serif" font-size="18">validate them, train adapters</text>
+
+  <rect x="730" y="202" width="78" height="12" rx="6" fill="url(#accentA)"/>
+  <text x="730" y="245" fill="#F4F8FC" font-family="Segoe UI, Arial, sans-serif" font-size="26" font-weight="700">5. Safety Logic</text>
+  <text x="730" y="278" fill="#AFC3D8" font-family="Segoe UI, Arial, sans-serif" font-size="18">Red-flag screening,</text>
+  <text x="730" y="304" fill="#AFC3D8" font-family="Segoe UI, Arial, sans-serif" font-size="18">consult-first behavior shaping</text>
+
+  <rect x="730" y="402" width="78" height="12" rx="6" fill="url(#accentB)"/>
+  <text x="730" y="445" fill="#F4F8FC" font-family="Segoe UI, Arial, sans-serif" font-size="26" font-weight="700">6. Serve</text>
+  <text x="730" y="478" fill="#AFC3D8" font-family="Segoe UI, Arial, sans-serif" font-size="18">FastAPI + Ollama bridge</text>
+  <text x="730" y="504" fill="#AFC3D8" font-family="Segoe UI, Arial, sans-serif" font-size="18">for retrieval-backed responses</text>
+
+  <path d="M330 260H395" stroke="url(#accentA)" stroke-width="6" stroke-linecap="round"/>
+  <path d="M330 460H395" stroke="url(#accentB)" stroke-width="6" stroke-linecap="round"/>
+  <path d="M645 260H710" stroke="url(#accentA)" stroke-width="6" stroke-linecap="round"/>
+  <path d="M645 460H710" stroke="url(#accentB)" stroke-width="6" stroke-linecap="round"/>
+  <path d="M205 340V380" stroke="#5D789B" stroke-width="5" stroke-linecap="round"/>
+  <path d="M520 340V380" stroke="#5D789B" stroke-width="5" stroke-linecap="round"/>
+  <path d="M835 340V380" stroke="#5D789B" stroke-width="5" stroke-linecap="round"/>
+
+  <rect x="980" y="196" width="140" height="344" rx="24" fill="#0B1830" stroke="#2A466D"/>
+  <text x="1008" y="240" fill="#F4F8FC" font-family="Segoe UI, Arial, sans-serif" font-size="22" font-weight="700">Outcome</text>
+  <text x="1008" y="286" fill="#9BDCC8" font-family="Segoe UI, Arial, sans-serif" font-size="48" font-weight="700">4B</text>
+  <text x="1008" y="315" fill="#AFC3D8" font-family="Segoe UI, Arial, sans-serif" font-size="16">portable model</text>
+  <text x="1008" y="380" fill="#77C6FF" font-family="Segoe UI, Arial, sans-serif" font-size="34" font-weight="700">RAG</text>
+  <text x="1008" y="408" fill="#AFC3D8" font-family="Segoe UI, Arial, sans-serif" font-size="16">runtime grounding</text>
+  <text x="1008" y="472" fill="#FFD28A" font-family="Segoe UI, Arial, sans-serif" font-size="34" font-weight="700">API</text>
+  <text x="1008" y="500" fill="#AFC3D8" font-family="Segoe UI, Arial, sans-serif" font-size="16">deployment layer</text>
+
+  <text x="80" y="628" fill="#6B88AA" font-family="Segoe UI, Arial, sans-serif" font-size="16">Built for evidence-backed training, safety-aware screening, and lightweight deployment.</text>
+</svg>

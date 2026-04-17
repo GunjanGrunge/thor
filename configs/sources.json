@@ -47,5 +47,30 @@
     "base_url": "https://eutils.ncbi.nlm.nih.gov/entrez/eutils",
     "enabled": true,
     "domain": "science"
+  },
+  "muscleandstrength": {
+    "base_url": "https://www.muscleandstrength.com",
+    "seed_urls": [
+      "https://www.muscleandstrength.com/exercises",
+      "https://www.muscleandstrength.com/workouts"
+    ],
+    "enabled": true,
+    "domain": "workout"
+  },
+  "harvard_supplements": {
+    "base_url": "https://nutritionsource.hsph.harvard.edu",
+    "seed_urls": [
+      "https://nutritionsource.hsph.harvard.edu/workout-supplements/"
+    ],
+    "enabled": true,
+    "domain": "supplements"
+  },
+  "nasm": {
+    "base_url": "https://www.nasm.org",
+    "seed_urls": [
+      "https://www.nasm.org/resource-center"
+    ],
+    "enabled": true,
+    "domain": "workout"
   }
 }

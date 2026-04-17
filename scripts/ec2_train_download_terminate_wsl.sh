@@ -154,7 +154,7 @@ if [[ "$TRAIN_OK" != "1" ]]; then
   echo "[train] failed"
   if [[ "$TERMINATE_ON_FAILURE" == "1" ]]; then
     echo "[aws] terminating failed instance: $EC2_INSTANCE_ID"
-    aws ec2 terminate-instances --instance-ids "$EC2_INSTANCE_ID" --region "$AWS_REGION" >/dev/null
+    python3 -m awscli ec2 terminate-instances --instance-ids "$EC2_INSTANCE_ID" --region "$AWS_REGION" >/dev/null
   fi
   exit 1
 fi
@@ -195,7 +195,7 @@ fi
 
 if [[ "$TERMINATE_ON_SUCCESS" == "1" ]]; then
   echo "[aws] terminating instance: $EC2_INSTANCE_ID"
-  aws ec2 terminate-instances --instance-ids "$EC2_INSTANCE_ID" --region "$AWS_REGION" >/dev/null
+  python3 -m awscli ec2 terminate-instances --instance-ids "$EC2_INSTANCE_ID" --region "$AWS_REGION" >/dev/null
 fi
 
 echo "[done] adapter downloaded to: $LOCAL_DOWNLOAD_DIR"

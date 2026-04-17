@@ -8,21 +8,11 @@ from typing import Any
 
 import jsonlines
 import numpy as np
-from sentence_transformers import SentenceTransformer
+from embedding_backend import encode_texts, sanitize_model_name
 
 
 ROOT = Path(__file__).resolve().parent.parent
 EMBED_DIR = ROOT / "data" / "embeddings"
-
-
-def sanitize_model_name(model_name: str) -> str:
-    return model_name.replace("/", "__")
-
-
-def maybe_set_windows_hf_cache() -> None:
-    windows_cache = "/mnt/c/Users/Bot/.cache/huggingface"
-    if Path(windows_cache).exists() and "HF_HOME" not in os.environ:
-        os.environ["HF_HOME"] = windows_cache
 
 
 def load_metadata(path: Path) -> list[dict[str, Any]]:
@@ -31,18 +21,11 @@ def load_metadata(path: Path) -> list[dict[str, Any]]:
 
 
 def retrieve_evidence(query: str, model_name: str = "sentence-transformers/all-MiniLM-L6-v2", top_k: int = 8) -> list[dict[str, Any]]:
-    maybe_set_windows_hf_cache()
-
     base_dir = EMBED_DIR / sanitize_model_name(model_name)
     metadata = load_metadata(base_dir / "metadata.jsonl")
     embeddings = np.load(base_dir / "embeddings.npy", mmap_mode="r")
 
-    model = SentenceTransformer(model_name)
-    query_embedding = model.encode(
-        [query],
-        normalize_embeddings=True,
-        convert_to_numpy=True,
-    ).astype(np.float32)[0]
+    query_embedding = encode_texts([query], model_name)[0]
 
     scores = embeddings @ query_embedding
     top_indices = np.argsort(scores)[-top_k:][::-1]

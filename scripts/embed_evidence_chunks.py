@@ -8,9 +8,8 @@ from typing import Any
 
 import jsonlines
 import numpy as np
-from sentence_transformers import SentenceTransformer
 
-
+from embedding_backend import encode_texts, sanitize_model_name
 ROOT = Path(__file__).resolve().parent.parent
 DATA_DIR = ROOT / "data"
 INGEST_DIR = DATA_DIR / "ingestion"
@@ -21,16 +20,6 @@ def ensure_dir(path: Path) -> None:
     path.mkdir(parents=True, exist_ok=True)
 
 
-def sanitize_model_name(model_name: str) -> str:
-    return model_name.replace("/", "__")
-
-
-def maybe_set_windows_hf_cache() -> None:
-    windows_cache = "/mnt/c/Users/Bot/.cache/huggingface"
-    if Path(windows_cache).exists() and "HF_HOME" not in os.environ:
-        os.environ["HF_HOME"] = windows_cache
-
-
 def load_chunks(path: Path, limit: int | None = None) -> list[dict[str, Any]]:
     records: list[dict[str, Any]] = []
     with jsonlines.open(path, mode="r") as reader:
@@ -39,30 +28,26 @@ def load_chunks(path: Path, limit: int | None = None) -> list[dict[str, Any]]:
             if limit is not None and len(records) >= limit:
                 break
     return records
-
-
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--input", default=str(INGEST_DIR / "evidence_chunks.jsonl"))
     parser.add_argument("--model", default="sentence-transformers/all-MiniLM-L6-v2")
-    parser.add_argument("--batch-size", type=int, default=128)
+    parser.add_argument("--batch-size", type=int, default=32)
     parser.add_argument("--limit", type=int, default=None)
     args = parser.parse_args()
-
-    maybe_set_windows_hf_cache()
 
     input_path = Path(args.input)
     records = load_chunks(input_path, args.limit)
     texts = [record["text"] for record in records]
 
-    model = SentenceTransformer(args.model)
-    embeddings = model.encode(
-        texts,
-        batch_size=args.batch_size,
-        show_progress_bar=True,
-        normalize_embeddings=True,
-        convert_to_numpy=True,
-    ).astype(np.float32)
+    all_embeddings = []
+    for i in range(0, len(texts), args.batch_size):
+        batch_texts = texts[i : i + args.batch_size]
+        all_embeddings.append(encode_texts(batch_texts, args.model))
+        if (i // args.batch_size) % 10 == 0:
+            print(f"Processed {min(i + args.batch_size, len(texts))}/{len(texts)} chunks")
+
+    embeddings = np.vstack(all_embeddings).astype(np.float32)
 
     out_dir = EMBED_DIR / sanitize_model_name(args.model)
     ensure_dir(out_dir)

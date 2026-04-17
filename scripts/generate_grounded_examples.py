@@ -10,7 +10,7 @@ from typing import Any
 import jsonlines
 import numpy as np
 import requests
-from sentence_transformers import SentenceTransformer
+from embedding_backend import encode_texts, sanitize_model_name
 
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -18,18 +18,6 @@ CONFIG_DIR = ROOT / "configs"
 DATA_DIR = ROOT / "data"
 EMBED_DIR = DATA_DIR / "embeddings"
 SFT_DIR = DATA_DIR / "sft"
-
-
-def sanitize_model_name(model_name: str) -> str:
-    return model_name.replace("/", "__")
-
-
-def maybe_set_windows_hf_cache() -> None:
-    windows_cache = "/mnt/c/Users/Bot/.cache/huggingface"
-    if Path(windows_cache).exists() and "HF_HOME" not in os.environ:
-        os.environ["HF_HOME"] = windows_cache
-
-
 def ensure_dir(path: Path) -> None:
     path.mkdir(parents=True, exist_ok=True)
 
@@ -57,17 +45,11 @@ def retrieve(
     embed_model_name: str,
     top_k: int,
 ) -> list[dict[str, Any]]:
-    maybe_set_windows_hf_cache()
     base_dir = EMBED_DIR / sanitize_model_name(embed_model_name)
     metadata = load_metadata(base_dir / "metadata.jsonl")
     embeddings = np.load(base_dir / "embeddings.npy", mmap_mode="r")
 
-    embed_model = SentenceTransformer(embed_model_name)
-    query_embedding = embed_model.encode(
-        [query],
-        normalize_embeddings=True,
-        convert_to_numpy=True,
-    ).astype(np.float32)[0]
+    query_embedding = encode_texts([query], embed_model_name)[0]
 
     scores = embeddings @ query_embedding
     top_indices = np.argsort(scores)[-top_k:][::-1]

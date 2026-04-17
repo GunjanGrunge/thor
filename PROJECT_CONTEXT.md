@@ -51,6 +51,23 @@ This repository started as a corpus-construction and retrieval-preparation proje
 It now also contains the first real standalone training datasets and the initial
 Unsloth training stack for `QwenF1`.
 
+## Recommended Direction
+
+- Keep the current repo path as the primary product strategy:
+  - consultation-tuned LoRA adapter training
+  - local retrieval over the evidence corpus
+  - evidence-backed prompt construction
+  - modular inference via `qwenf1_consult_rag.py` + `qwenf1_answer_with_rag.py`
+- Treat the model as behavior tuning, not the primary knowledge store.
+  - retrieval should provide factual depth
+  - the adapter should provide screening, validation, and consultation style
+- Produce the final deployment model in a runtime-friendly format such as GGUF,
+  ideally by exporting/merging the tuned adapter into a GGUF-ready base model.
+- Expand sources by ingesting new web content into the same normalized evidence
+  corpus and embedding index, rather than relying on live web generation.
+- Reserve graph-based RAG or knowledge-graph enhancements for a later iteration
+  once the core retrieval + consultation stack is stable.
+
 ## Evidence Standard
 
 Preferred source hierarchy:

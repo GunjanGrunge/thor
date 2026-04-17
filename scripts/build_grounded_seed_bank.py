@@ -22,7 +22,7 @@ def add(rows: list[dict], seed_id: str, domain: str, user_query: str, notes: str
 
 def main() -> None:
     parser = argparse.ArgumentParser()
-    parser.add_argument("--output", default=str(CONFIG_DIR / "grounded_generation_seeds_v3.json"))
+    parser.add_argument("--output", default=str(CONFIG_DIR / "grounded_generation_seeds_v4.json"))
     args = parser.parse_args()
 
     seeds: list[dict] = []
@@ -84,6 +84,18 @@ def main() -> None:
     add(seeds, "seed_tendinopathy_return_v3", "workout", "I have been told I have tendinopathy and I want to train without making it worse. What should I know?", "Must screen for site, severity, loading tolerance, and current rehab status.")
     add(seeds, "seed_plant_based_endurance_v3", "combined", "I am plant-based and training for endurance events. How should I fuel and strength train without under-recovering?", "Must screen for training volume, current intake, energy availability, and protein sources.")
     add(seeds, "seed_post_illness_return_v3", "workout", "I was sick for a while and feel deconditioned. How do I return to training without overdoing it?", "Must screen for current symptoms, medical guidance, baseline capacity, and return-to-activity tolerance.")
+
+    # Advanced Sports Nutrition (Targeting Textbook & Toolkit)
+    add(seeds, "seed_vegan_iron_absorption_v4", "nutrition", "I am a vegan athlete struggling with low energy. How can I maximize iron absorption from my meals?", "Must screen for clinical anemia, complete diet profile, fatigue severity, and recommend Vitamin C pairing while avoiding tea/coffee around meals.")
+    add(seeds, "seed_glycogen_sparing_endurance_v4", "nutrition", "I am training for an ultramarathon. How do I structure my fat and carb intake to enhance glycogen sparing?", "Must carefully explain metabolic flexibility, avoid extreme keto claims, and screen for race distance and current fueling strategy.")
+    add(seeds, "seed_b6_toxicity_recovery_v4", "supplements", "I take a high-dose B6 supplement for recovery but I read it causes nerve issues. What is the safe upper limit?", "Must heavily emphasize safety, check for paresthesia symptoms, explain water-soluble toxicity, and recommend whole-food sources.")
+    add(seeds, "seed_sweat_rate_electrolytes_v4", "nutrition", "I am a heavy sweater when playing soccer in the heat. How do I calculate my sweat rate and sodium replacement?", "Must explain standard sweat testing, avoid generic salt pill advice without context, and screen for cramping or hyponatremia risks.")
+    add(seeds, "seed_protein_pacing_recovery_v4", "nutrition", "Does it matter if I eat all my protein in two big meals versus four smaller meals for muscle growth?", "Must cite protein pacing limits per meal, screen for total daily intake, and avoid bro-science.")
+    add(seeds, "seed_hydration_osmolality_v4", "nutrition", "Should my sports drink be hypotonic or isotonic for a 2-hour tennis match?", "Explain osmolality, gastric emptying, and screen for individual gut tolerance and environmental heat.")
+    add(seeds, "seed_plant_leucine_trigger_v4", "nutrition", "What vegan protein sources actually hit the leucine threshold to trigger muscle protein synthesis?", "Must detail leucine content in soy/pea blends vs isolated sources and screen for total protein goals.")
+    add(seeds, "seed_female_triad_reds_v4", "combined", "I am a female runner, losing weight, but my periods stopped and my performance is dropping. What is happening?", "Extremely critical. Must screen for RED-S, advise immediate physician/dietitian consultation, and prioritize adequate fueling over performance gains.")
+    add(seeds, "seed_beta_alanine_tingles_v4", "supplements", "I tried beta-alanine and my face went numb. Is this dangerous and how much should I take?", "Check for paresthesia panic, explain harmlessness, advise divided dosing, and confirm the training goal (muscular endurance).")
+    add(seeds, "seed_creatine_water_retention_v4", "supplements", "I want to take creatine for sprinting but I am afraid of water weight slowing me down. What is the evidence?", "Must address intracellular vs extracellular retention, and relate it strictly to power-to-weight ratio sports.")
 
     output_path = Path(args.output)
     output_path.parent.mkdir(parents=True, exist_ok=True)

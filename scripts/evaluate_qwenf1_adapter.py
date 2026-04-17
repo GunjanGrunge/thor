@@ -44,6 +44,11 @@ DEFAULT_OUT_DIR = Path(
     )
 )
 DEFAULT_MAX_SEQ_LENGTH = int(os.getenv("QWENF1_EVAL_MAX_SEQ", "2048"))
+DEFAULT_EMBED_MODEL = os.getenv(
+    "QWENF1_EVAL_EMBED_MODEL",
+    "sentence-transformers/all-MiniLM-L6-v2",
+)
+DEFAULT_RAG_TOP_K = int(os.getenv("QWENF1_EVAL_RAG_TOP_K", "6"))
 
 
 @dataclass
@@ -98,25 +103,31 @@ def load_model(base_model: str, adapter_path: Path, max_seq_length: int):
     return model, tokenizer
 
 
-def make_prompt(tokenizer, user_prompt: str) -> str:
-    messages = [
-        {
-            "role": "system",
-            "content": (
-                "You are QwenF1, an evidence-based fitness and nutrition assistant. "
-                "Ask screening questions when information is missing, avoid unsafe overconfidence, "
-                "and provide practical reasoning."
-            ),
-        },
-        {"role": "user", "content": user_prompt},
-    ]
+def make_prompt(tokenizer, user_prompt: str, retrieved: list[dict[str, Any]] | None = None) -> str:
+    if retrieved is not None:
+        # Import lazily so non-RAG evals don't need these deps
+        from qwenf1_consult_rag import build_messages
+        messages = build_messages(user_prompt, retrieved, {})
+    else:
+        messages = [
+            {
+                "role": "system",
+                "content": (
+                    "You are QwenF1, an evidence-based fitness and nutrition assistant. "
+                    "Ask screening questions when information is missing, avoid unsafe overconfidence, "
+                    "and provide practical reasoning."
+                ),
+            },
+            {"role": "user", "content": user_prompt},
+        ]
     if hasattr(tokenizer, "apply_chat_template"):
         return tokenizer.apply_chat_template(
             messages,
             tokenize=False,
             add_generation_prompt=True,
         )
-    return f"System: {messages[0]['content']}\n\nUser: {user_prompt}\n\nAssistant:"
+    chunks = [f"{m['role'].capitalize()}: {m['content']}" for m in messages]
+    return "\n\n".join(chunks) + "\n\nAssistant:"
 
 
 def generate(model, tokenizer, prompt: str, max_new_tokens: int) -> str:
@@ -144,7 +155,8 @@ def clean_response(text: str) -> str:
 
 
 def contains_phrase(text: str, phrase: str) -> bool:
-    return phrase.lower() in text.lower()
+    """Match any pipe-separated alternative against the text (case-insensitive)."""
+    return any(alt.strip().lower() in text.lower() for alt in phrase.split("|"))
 
 
 def score_case(case: EvalCase, response: str) -> dict[str, Any]:
@@ -258,17 +270,30 @@ def main() -> None:
     parser.add_argument("--out-dir", type=Path, default=DEFAULT_OUT_DIR)
     parser.add_argument("--max-new-tokens", type=int, default=260)
     parser.add_argument("--max-seq-length", type=int, default=DEFAULT_MAX_SEQ_LENGTH)
+    parser.add_argument("--rag", action="store_true", help="Retrieve evidence for each case before generation")
+    parser.add_argument("--embed-model", default=DEFAULT_EMBED_MODEL)
+    parser.add_argument("--rag-top-k", type=int, default=DEFAULT_RAG_TOP_K)
     args = parser.parse_args()
 
     require_cuda_torch()
     cases = load_cases(args.eval_set)
     model, tokenizer = load_model(args.base_model, args.adapter, args.max_seq_length)
 
+    retrieve = None
+    if args.rag:
+        from retrieve_evidence import retrieve_evidence
+        def retrieve(query: str) -> list[dict[str, Any]]:
+            return retrieve_evidence(query, model_name=args.embed_model, top_k=args.rag_top_k)
+
     rows: list[dict[str, Any]] = []
     for case in cases:
-        prompt = make_prompt(tokenizer, case.user)
+        retrieved = retrieve(case.user) if retrieve is not None else None
+        prompt = make_prompt(tokenizer, case.user, retrieved)
         response = generate(model, tokenizer, prompt, args.max_new_tokens)
-        rows.append(score_case(case, response))
+        result = score_case(case, response)
+        if retrieved is not None:
+            result["rag_chunks"] = len(retrieved)
+        rows.append(result)
         print(f"{case.id}: {rows[-1]['verdict']} score={rows[-1]['score']}")
 
     summary = summarize(rows)
